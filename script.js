@@ -56,9 +56,7 @@ function t(code, params = {}) {
   }
   return text;
 }
-   
-const API_URL = "https://script.google.com/macros/s/AKfycby28KblKy-ICEGstB7L-UK5rQ1awPokRiIIdqpJ49_7nVmS_oHYiA9qapWtOVo_UnEHbQ/exec";
-
+const API_URL = API_CONFIG.apiUrl;
 /* ===== 共用訊息顯示 ===== */
 function showMessage(text, type="ok", msgId="message") {
   const el = document.getElementById(msgId);
