@@ -32,7 +32,7 @@ console.log("初始語言:", currentLang);
 async function loadTranslations(lang) {
   console.log("開始載入語系:", lang);
   try {
-    const res = await fetch(`/i18n/${lang}.json`);
+    const res = await fetch(`Attendance-System/i18n/${lang}.json`);
     if (!res.ok) {
       throw new Error(`HTTP 錯誤: ${res.status}`);
     }
