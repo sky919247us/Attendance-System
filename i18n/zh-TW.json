@@ -1,0 +1,70 @@
+{
+  "APP_TITLE": "文輝打卡系統",
+  "CHECKING_LOGIN": "正在檢查登入狀態…",
+  "FOOTER_NOTICE": "※ 登入狀態保存在你的瀏覽器（localStorage）。若換裝置或清除資料需重新登入。",
+  
+  "ADJUST_PUNCH_TITLE": "補打卡",
+  "ADJUST_PUNCH_DATETIME_LABEL": "選擇補打卡日期與時間：",
+    
+  "WELCOME_BACK": "歡迎回來：{name}",
+  "PUNCH_SUCCESS": "✅{type}打卡成功",
+  "ADJUST_PUNCH_SUCCESS": "✅{type} 補打卡成功",
+  
+  "ERR_SESSION_INVALID": "🔄 登入憑證-已失效「請重新登入」",
+  "ERR_SESSION_EXPIRED": "Session 已過期",
+  "ERR_SESSION_TOKEN": "無效的 sessionToken",
+  "MISSING_SESSION_TOKEN": "缺少 sessionToken",
+  "SESSION_SHEET_NOT_FOUND": "找不到 Session 工作表",
+  
+  "ERR_INVALID_OR_USED_TOKEN": "無效或已使用的 token",
+  "ERR_INVALID_ID_TOKEN": "id_token 格式錯誤",
+  "ERR_EXCHANGE_TOKEN_FAIL": "交換 access_token 失敗",
+  
+  "ERR_MISSING_MONTH": "缺少 month 參數",
+  "ERR_MISSING_DATE": "缺少月份",
+  
+  "ERR_ACCOUNT_DISABLED": "帳號未啟用！請通知管理員！",
+  "ERR_NO_DATA": "沒有資料",
+  
+  "ERR_OUT_OF_RANGE": "❌ 打卡失敗！ 不在允許的打卡地點範圍內",
+  
+  "ABNORMAL_MISSING_ALL": "{date} 缺卡（全日未打卡）",
+  "ABNORMAL_MISSING_OUT": "{date} 缺下班卡",
+  "ABNORMAL_MISSING_IN": "{date} 缺上班卡",
+  
+  "BTN_RELOGIN": "重新登入",
+  "PLEASE_RELOGIN": "請重新登入",
+  
+  "BTN_PUNCH_IN": "上班打卡",
+  "BTN_PUNCH_OUT": "下班打卡",
+  "BTN_LOGOUT": "登出",
+  "BTN_ADJUST_IN": "補上班打卡",
+  "BTN_ADJUST_OUT": "補下班打卡",
+  "BTN_VIEW_ABNORMAL": "⚠️ 查看異常紀錄 👀",
+  "LOADING": "⏳ 處理中...",
+  "INVALID_ADJUST_TIME": "⚠️ 選擇的時間不合法",
+  "SELECT_ADJUST_DATETIME": "請選擇補打卡日期時間",
+  "LOGIN_SUCCESS": "✅ 登入成功，已儲存 Token！",
+  "ERROR_GEOLOCATION": "⚠️ 無法取得定位：{msg}",
+  "ERROR_LOGIN_FAILED": "❌ 登入失敗：{msg}",
+  
+  "calendar_title": "我的打卡月曆",
+   "prev_month": "上一月",
+   "next_month": "下一月",
+   "home_page": "打卡頁",
+   "modal_detail_title": "打卡明細",
+   "close": "關閉",
+   "load_failed": "讀取紀錄失敗",
+   "year": "年",
+   "month": "月",
+   "status_normal": "✔️",
+   "status_abnormal": "⚠️",
+   "status_virtual": "虛",
+   "status_repair": "補",
+   "repair_approved": "已審核",
+   "repair_pending": "待審",
+   "no_record": "無紀錄",
+   "ERR_BEFORE_MONTH_START": "⚠️ 不能選擇本月以前的時間",
+     "ERR_AFTER_YESTERDAY": "⚠️ 不能選擇昨天以後的時間"
+  
+}
