@@ -4,40 +4,40 @@
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>打卡系統</title>
-    <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css">
 </head>
-<div class="cardsContainer" style="display:flex; flex-direction:column; gap:1px; align-items:center;">
 <body>
-  <div class="container" id="normalPunchCard">
+    <div class="cardsContainer">
+        <div class="container" id="normalPunchCard">
       <h1 id="appTitle"></h1>
-        <div id="status" class="muted" style="display:flex; align-items:center; gap:8px;">
-      <img id="profileImg" src="" alt="頭像" style="display:none; width:40px; height:40px; border-radius:50%;">
-          <span id="userName"></span>
-    </div>
-        <div id="actions" class="row" style="display:none;">
-      <button class="primary" id="btnIn">上班打卡</button>
-      <button class="ghost" id="btnOut">下班打卡</button>
-      <button id="btnLogout" style="margin-left:auto;">登出</button>
+      <div id="status" class="muted">
+        <img id="profileImg" src="" alt="頭像" style="display:none; width:40px; height:40px; border-radius:50%;">
+        <span id="userName"></span>
+      </div>
+      <div id="actions" class="row" style="display:none;">
+        <button class="primary" id="btnIn">上班打卡</button>
+        <button class="ghost" id="btnOut">下班打卡</button>
+        <button id="btnLogout">登出</button>
+      </div>
+
+      <div id="login" style="display:none;">
+        <button class="primary" id="btnLogin">使用 LINE 登入</button>
+      </div>
+      <div id="loading" style="display:none; text-align:center;">
+        <span>⏳ 處理中...</span>
+      </div>
+      <div id="message" class="msg" style="display:none;"></div>
+      <div class="foot" id="footerNotice"></div>
     </div>
 
-        <div id="login" style="display:none;">
-      <button class="primary" id="btnLogin">使用 LINE 登入</button>
-    </div>
-        <div id="loading" style="display:none; text-align:center; margin:10px;">
-      <span>⏳ 處理中...</span>
-    </div>
-        <div id="message" class="msg" style="display:none;"></div>
-    <div class="foot" id="footerNotice"></div>
-  </div>
-  
-    <div class="container" id="adjustPunchCard" style="display:none;">
-          <button class="warning" id="btnViewAbnormal" style="display:block;">⚠️ 查看異常紀錄 👀</button>
-    <div id="loadingMsg" style="display:none; text-align:center; margin:10px;">
-      <span>⏳ 處理中...</span>
-    </div>
-    <div id="adjustMessage" class="msg" style="display:none;"></div>
-    <h1 id="adjustPunchTitle"></h1>
-    <div class="row">
+        <div class="container" id="adjustPunchCard" style="display:none;">
+      <button class="warning" id="btnViewAbnormal">⚠️ 查看異常紀錄 👀</button>
+      <div id="loadingMsg" style="display:none; text-align:center;">
+        <span>⏳ 處理中...</span>
+      </div>
+      <div id="adjustMessage" class="msg" style="display:none;"></div>
+      <h1 id="adjustPunchTitle"></h1>
+      <div class="row">
         <div class="form-group">
           <label id="adjustPunchDateTimeLabel" for="adjustDateTime">
             選擇日期時間：
@@ -47,14 +47,13 @@
             type="datetime-local"
             class="form-input">
         </div>
-
-      <button class="ghost" id="btnAdjustIn">補上班打卡</button>
-      <button class="ghost" id="btnAdjustOut">補下班打卡</button>
+        <button class="ghost" id="btnAdjustIn">補上班打卡</button>
+        <button class="ghost" id="btnAdjustOut">補下班打卡</button>
+      </div>
     </div>
-   
   </div>
-</div>
-    <script src="config.js"></script>
-    <script src="script.js"></script>
+
+  <script src="config.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
