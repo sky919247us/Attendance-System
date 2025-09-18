@@ -256,7 +256,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   document.getElementById("btnLogout").onclick = () => {
     localStorage.removeItem("sessionToken");
     //location.reload();
-    window.location.href = "/index.html"
+    window.location.href = "/Attendance-System"
   };
 
   function doPunch(type, cb) {
