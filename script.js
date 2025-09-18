@@ -236,7 +236,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         btn.id = "btnRelogin";
         btn.textContent = t("BTN_RELOGIN");
         btn.className = "primary";
-        btn.onclick = () => { window.location.href = "https://0rigind1865-bit.github.io/Attendance-System/"; };
+        btn.onclick = () => { window.location.href = API_CONFIG.redirectUrl; };
 
         container.appendChild(btn);
       }
