@@ -4,15 +4,16 @@
         <link rel="icon" href="/favicon.ico" type="image/x-icon">
             <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
                 <title>打卡系統</title>
+                <script src="https://cdn.tailwindcss.com"></script>
+                    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
                 <link rel="stylesheet" href="style.css">
     </head>
-    <body>
-        <div class="cardsContainer">
-            
+    <body class="flex items-center justify-center min-h-screen p-4">
+        <div id="app-container" class="w-full max-w-md mx-auto">
             <!-- User Profile & Header -->
             <header id="user-header" class="flex items-center justify-between p-4 mb-6 card fade-in" style="display: none;">
                 <div class="flex items-center space-x-3">
-                    <img id="profileImg" src="https://placehold.co/40x40/e0e0e0/757575?text=U" alt="頭像" class="w-10 h-10 rounded-full">
+                    <img id="profile-img" src="https://placehold.co/40x40/e0e0e0/757575?text=U" alt="頭像" class="w-10 h-10 rounded-full">
                     <div>
                         <p id="user-name" class="font-semibold text-gray-800">使用者名稱</p>
                         <p class="text-xs text-gray-500">歡迎回來！</p>
@@ -20,53 +21,118 @@
                 </div>
                 <button id="logout-btn" class="text-sm font-medium text-gray-600 hover:text-indigo-600">登出</button>
             </header>
-            
-            <div class="container" id="normalPunchCard">
-                <h1 id="appTitle"></h1>
-                <div id="status" class="muted">
-                    <img id="profileImg" src="" alt="頭像" style="display:none; width:40px; height:40px; border-radius:50%;">
-                        <span id="userName"></span>
+
+            <!-- Login Section -->
+            <section id="login-section" class="text-center p-8 card fade-in">
+                <h1 id="appTitle" class="text-2xl font-bold text-gray-800 mb-2">歡迎使用打卡系統</h1>
+                <p class="text-gray-600 mb-6" id="status">請點擊登入以繼續。</p>
+                <div id="login" class="space-y-4">
+                    <button id="login-btn" class="w-full py-3 px-4 rounded-lg font-bold btn-primary">登入</button>
                 </div>
-                <div id="actions" class="row" style="display:none;">
-                    <button class="primary" id="btnIn">上班打卡</button>
-                    <button class="ghost" id="btnOut">下班打卡</button>
-                    <button id="btnLogout">登出</button>
+            </section>
+
+            <!-- Main App Content -->
+            <div id="main-app" class="fade-in" style="display: none;">
+                <!-- Tab Navigation -->
+                <div class="flex justify-center space-x-2 mb-6">
+                    <button id="tab-dashboard-btn" class="py-2 px-4 rounded-full font-bold text-sm text-white bg-indigo-600">儀表板</button>
+                    <button id="tab-monthly-btn" class="py-2 px-4 rounded-full font-bold text-sm text-gray-600 bg-gray-200">月份檢視</button>
+                    <button id="tab-location-btn" class="py-2 px-4 rounded-full font-bold text-sm text-gray-600 bg-gray-200">定位</button>
+                    <button id="tab-admin-btn" class="py-2 px-4 rounded-full font-bold text-sm text-gray-600 bg-gray-200" style="display: none;">管理員</button>
                 </div>
                 
-                <div id="login" style="display:none;">
-                    <button class="primary" id="btnLogin">使用 LINE 登入</button>
-                </div>
-                
-                <div id="loading" style="display:none; text-align:center;">
-                    <span>⏳ 處理中...</span>
-                </div>
-                
-                <div id="message" class="msg" style="display:none;"></div>
-                <div class="foot" id="footerNotice"></div>
-            </div>
-            
-            <div class="container" id="adjustPunchCard" style="display:none;">
-                <button class="warning" id="btnViewAbnormal">⚠️ 查看異常紀錄 👀</button>
-                <div id="loadingMsg" style="display:none; text-align:center;">
-                    <span>⏳ 處理中...</span>
-                </div>
-                <div id="adjustMessage" class="msg" style="display:none;"></div>
-                <h1 id="adjustPunchTitle"></h1>
-                <div class="row">
-                    <div class="form-group">
-                        <label id="adjustPunchDateTimeLabel" for="adjustDateTime">
-                            選擇日期時間：
-                        </label>
-                        <input
-                            id="adjustDateTime"
-                            type="datetime-local"
-                            class="form-input">
+                <!-- Dashboard View -->
+                <main id="dashboard-view" class="space-y-6">
+                    <div class="card p-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-1">打卡專區</h2>
+                        <p class="text-gray-500 mb-4">請點擊下方按鈕進行上班或下班打卡。</p>
+                        <div id="punch-actions" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <button id="punch-in-btn" class="w-full py-3 px-4 rounded-lg font-bold btn-primary">上班打卡</button>
+                            <button id="punch-out-btn" class="w-full py-3 px-4 rounded-lg font-bold btn-secondary">下班打卡</button>
+                        </div>
                     </div>
-                    <button class="ghost" id="btnAdjustIn">補上班打卡</button>
-                    <button class="ghost" id="btnAdjustOut">補下班打卡</button>
-                </div>
+
+                    <div id="abnormal-records-section" class="card p-6" style="display: none;">
+                        <h2 class="text-xl font-bold text-gray-800 mb-1">考勤紀錄</h2>
+                        <p class="text-gray-500 mb-4">系統會自動偵測本月異常紀錄，您可以在此進行補打卡。</p>
+                        <div id="abnormal-records-container">
+                            <div id="records-loading" class="text-center text-gray-500 py-4">正在載入紀錄...</div>
+                            <div id="records-empty" class="text-center text-green-600 bg-green-50 p-4 rounded-lg" style="display: none;">
+                                <p class="font-semibold">太棒了！</p>
+                                <p>本月目前沒有任何異常紀錄。</p>
+                            </div>
+                            <ul id="abnormal-list" class="space-y-3"></ul>
+                        </div>
+                        <div id="adjustment-form-container" class="mt-4"></div>
+                    </div>
+                </main>
+                
+                <!-- Monthly View -->
+                <section id="monthly-view" class="space-y-6" style="display: none;">
+                    <div class="card p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <button id="prev-month" class="text-gray-600 p-2 rounded-full hover:bg-gray-100">◄</button>
+                            <h3 id="month-title" class="font-bold text-xl text-gray-800"></h3>
+                            <button id="next-month" class="text-gray-600 p-2 rounded-full hover:bg-gray-100">►</button>
+                        </div>
+                        <div class="grid grid-cols-7 text-center text-sm font-semibold text-gray-500 mb-2">
+                            <span>一</span>
+                            <span>二</span>
+                            <span>三</span>
+                            <span>四</span>
+                            <span>五</span>
+                            <span>六</span>
+                            <span>日</span>
+                        </div>
+                        <div id="calendar-grid" class="grid grid-cols-7 gap-1"></div>
+                    </div>
+
+                    <div id="daily-records-card" class="card p-6" style="display: none;">
+                        <h4 id="daily-records-title" class="text-xl font-bold text-gray-800 mb-2"></h4>
+                        <ul id="daily-records-list" class="space-y-3"></ul>
+                        <div id="daily-records-empty" class="text-center text-gray-500 py-4" style="display: none;">
+                            該日沒有打卡紀錄。
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Location View -->
+                <section id="location-view" class="space-y-6" style="display: none;">
+                    <div class="card p-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-1">當前位置</h2>
+                        <p class="text-gray-500 mb-4">系統將透過 GPS 偵測您的位置。</p>
+                        <div id="map-container" class="w-full h-64 rounded-lg mb-4 bg-gray-200 flex items-center justify-center text-gray-500">
+                            正在載入地圖...
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <p class="text-sm text-gray-600"><strong>狀態：</strong> <span id="location-status">未偵測</span></p>
+                            <p class="text-sm text-gray-600"><strong>經緯度：</strong> <span id="location-coords">未知</span></p>
+                        </div>
+                    </div>
+                </section>
+
+                 <!-- Admin View -->
+                <section id="admin-view" class="space-y-6" style="display: none;">
+                    <div class="card p-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-1">待審核請求</h2>
+                        <p class="text-gray-500 mb-4">請處理員工提出的補打卡或虛擬卡請求。</p>
+                        <div id="pending-requests-container">
+                            <div id="requests-loading" class="text-center text-gray-500 py-4">正在載入請求...</div>
+                            <div id="requests-empty" class="text-center text-green-600 bg-green-50 p-4 rounded-lg" style="display: none;">
+                                <p class="font-semibold">太棒了！</p>
+                                <p>目前沒有任何待審核的請求。</p>
+                            </div>
+                            <ul id="pending-requests-list" class="space-y-3"></ul>
+                        </div>
+                    </div>
+                </section>
             </div>
         </div>
+        <!-- Notification -->
+         <div id="notification" class="notification">
+             <p id="notification-message"></p>
+         </div>
+         
         <script src="config.js"></script>
         <script src="script.js"></script>
     </body>
