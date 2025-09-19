@@ -131,9 +131,9 @@ function ensureLogin() {
                 }
             });
         }
-    } else {
+     else {
         const errorMsg = t(res.code || "UNKNOWN_ERROR");
-        showNotification(`❌ ${errorMsg}`, "error");
+        showNotification(`❌ ${errorMsg}`, "error");//這邊要多一個錯誤代碼
         document.getElementById('login-btn').style.display = 'block';
         document.getElementById('user-header').style.display = 'none';
         document.getElementById('main-app').style.display = 'none';
