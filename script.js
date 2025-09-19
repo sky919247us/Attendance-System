@@ -1,5 +1,5 @@
 // 使用 CDN 或絕對路徑來載入 JSON 檔案
-const TRANSLATION_CDN_URL = 'https://unpkg.com/attendance-i18n@1.0.0/';
+
 
 let currentLang = localStorage.getItem("lang");
 let translations = {};
@@ -7,7 +7,7 @@ let translations = {};
 // 載入語系檔
 async function loadTranslations(lang) {
     try {
-        const res = await fetch(`${TRANSLATION_CDN_URL}${lang}.json`);
+        const res = await fetch(`i18n/${lang}.json`);
         if (!res.ok) {
             throw new Error(`HTTP 錯誤: ${res.status}`);
         }
