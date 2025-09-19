@@ -105,30 +105,40 @@ const showNotification = (message, type = 'success') => {
 
 function ensureLogin() {
     return new Promise((resolve) => {
-        callApi("checkSession", (res) => {
-            if (res.ok) {
-                document.getElementById("user-name").textContent = res.user.name;
-                document.getElementById("profile-img").src = res.user.picture || res.user.rate;
-                
-                localStorage.setItem("sessionUserId", res.user.userId);
-                showNotification(t("LOGIN_SUCCESS"));
-                
-                document.getElementById('login-section').style.display = 'none';
-                document.getElementById('user-header').style.display = 'flex';
-                document.getElementById('main-app').style.display = 'block';
-
-                // 檢查異常打卡
-                checkAbnormal();
-                resolve(true);
-            } else {
-                const errorMsg = t(res.code || "UNKNOWN_ERROR");
-                showNotification(`❌ ${errorMsg}`, "error");
-                document.getElementById('login-btn').style.display = 'block';
-                document.getElementById('user-header').style.display = 'none';
-                document.getElementById('main-app').style.display = 'none';
-                resolve(false);
-            }
-        });
+        if (localStorage.getItem("sessionToken")){
+            callApi("checkSession", (res) => {
+                if (res.ok) {
+                    document.getElementById("user-name").textContent = res.user.name;
+                    document.getElementById("profile-img").src = res.user.picture || res.user.rate;
+                    
+                    localStorage.setItem("sessionUserId", res.user.userId);
+                    showNotification(t("LOGIN_SUCCESS"));
+                    
+                    document.getElementById('login-section').style.display = 'none';
+                    document.getElementById('user-header').style.display = 'flex';
+                    document.getElementById('main-app').style.display = 'block';
+                    
+                    // 檢查異常打卡
+                    checkAbnormal();
+                    resolve(true);
+                } else {
+                    const errorMsg = t(res.code || "UNKNOWN_ERROR");
+                    showNotification(`❌ ${errorMsg}`, "error");
+                    document.getElementById('login-btn').style.display = 'block';
+                    document.getElementById('user-header').style.display = 'none';
+                    document.getElementById('main-app').style.display = 'none';
+                    resolve(false);
+                }
+            });
+        }
+    } else {
+        const errorMsg = t(res.code || "UNKNOWN_ERROR");
+        showNotification(`❌ ${errorMsg}`, "error");
+        document.getElementById('login-btn').style.display = 'block';
+        document.getElementById('user-header').style.display = 'none';
+        document.getElementById('main-app').style.display = 'none';
+        resolve(false);
+    }
     });
 }
 
