@@ -228,6 +228,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         exchangeToken("getProfile", otoken, (res) => {
             if (res.ok && res.sToken) {
                 localStorage.setItem("sessionToken", res.sToken);
+                // 成功登入後，移除網址中的 'code' 參數以避免重新整理錯誤
+                history.replaceState({}, '', window.location.pathname);
                 ensureLogin();
             } else {
                 showNotification(t("ERROR_LOGIN_FAILED", {msg: res.msg || t("UNKNOWN_ERROR")}), "error");
