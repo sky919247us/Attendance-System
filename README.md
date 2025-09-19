@@ -68,12 +68,15 @@
 ---
 
 ## 專案檔案結構
-├── index.html # 網頁主頁
-├── style.css # 樣式表
-├── script.js # 前端主要邏輯
-├── config.js # API 和其他設定
-├── i18n/ # 語系檔目錄
-│ ├── en-US.json # 英文語系
-│ ├── ja-JP.json # 日文語系
-│ └── zh-TW.json # 繁體中文語系
-└── README.md # 專案說明文件
+
+```text
+LINE-Attendance-System/
+├── index.html        # 網頁主頁
+├── style.css         # 樣式表
+├── script.js         # 前端主要邏輯
+├── config.js         # API 和其他設定
+├── i18n/             # 語系檔目錄
+│   ├── en-US.json    # 英文語系
+│   ├── ja-JP.json    # 日文語系
+│   └── zh-TW.json    # 繁體中文語系
+└── README.md         # 專案說明文件
