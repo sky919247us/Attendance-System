@@ -131,8 +131,6 @@ function ensureLogin() {
                 }
             });
         }else {
-            const errorMsg = t(res.code || "UNKNOWN_ERROR");
-            showNotification(`❌ ${errorMsg}`, "error");
             document.getElementById('login-btn').style.display = 'block';
             document.getElementById('user-header').style.display = 'none';
             document.getElementById('main-app').style.display = 'none';
