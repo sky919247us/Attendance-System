@@ -130,7 +130,8 @@ function ensureLogin() {
                     resolve(false);
                 }
             });
-        }else {
+        }
+        else {
             document.getElementById('login-btn').style.display = 'block';
             document.getElementById('user-header').style.display = 'none';
             document.getElementById('main-app').style.display = 'none';
