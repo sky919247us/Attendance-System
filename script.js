@@ -34,7 +34,7 @@ function callApi(action, cb, loadingId = "loading") {
     const token = localStorage.getItem("sessionToken");
     const url = `${API_CONFIG.apiUrl}?action=${action}&token=${token}&callback=handleResponse`;
     const script = document.createElement("script");
-
+    
     // 顯示指定 loading
     const loadingEl = document.getElementById(loadingId);
     if(loadingEl) loadingEl.style.display = "block";
@@ -74,12 +74,12 @@ function callApiAdjustPunch(type, datetime, cb) {
     const script = document.createElement("script");
     const loadingEl = document.getElementById("loadingMsg");
     if(loadingEl) loadingEl.style.display = "block";
-
+    
     window.handleAdjustResponse = (res) => {
         if(loadingEl) loadingEl.style.display = "none";
         cb(res);
     };
-
+    
     script.src = url;
     script.onerror = () => showNotification(t("CONNECTION_FAILED"), "error");
     document.body.appendChild(script);
@@ -158,26 +158,26 @@ function checkAbnormal() {
             const recordsEmpty = document.getElementById("records-empty");
             
             if (res.records.length > 0) {
-                                    abnormalRecordsSection.style.display = 'block';
-                                    recordsEmpty.style.display = 'none';
-                                    abnormalList.innerHTML = '';
-                                    res.records.forEach(record => {
-                                        const li = document.createElement('li');
-                                        li.className = 'p-3 bg-gray-50 rounded-lg flex justify-between items-center';
-                                        li.innerHTML = `
+                abnormalRecordsSection.style.display = 'block';
+                recordsEmpty.style.display = 'none';
+                abnormalList.innerHTML = '';
+                res.records.forEach(record => {
+                    const li = document.createElement('li');
+                    li.className = 'p-3 bg-gray-50 rounded-lg flex justify-between items-center';
+                    li.innerHTML = `
                                             <div>
                                                 <p class="font-medium text-gray-800">${record.date}</p>
                                                 <p class="text-sm text-red-600">${record.reason}</p>
                                             </div>
                                             <button data-date="${record.date}" data-reason="${record.reason}" class="adjust-btn text-sm font-semibold text-indigo-600 hover:text-indigo-800">補打卡</button>
                                         `;
-                                        abnormalList.appendChild(li);
-                                    });
-                                } else {
-                                    abnormalRecordsSection.style.display = 'block';
-                                    recordsEmpty.style.display = 'block';
-                                    abnormalList.innerHTML = '';
-                                }
+                    abnormalList.appendChild(li);
+                });
+            } else {
+                abnormalRecordsSection.style.display = 'block';
+                recordsEmpty.style.display = 'block';
+                abnormalList.innerHTML = '';
+            }
         } else {
             console.error("Failed to fetch abnormal records:", res.msg);
             showNotification(t("ERROR_FETCH_RECORDS"), "error");
@@ -186,44 +186,73 @@ function checkAbnormal() {
 }
 
 // 新增：渲染日曆的函式
-        function renderCalendar(date) {
-            const monthTitle = document.getElementById('month-title');
-            const calendarGrid = document.getElementById('calendar-grid');
-            
-            const year = date.getFullYear();
-            const month = date.getMonth();
-            const today = new Date();
-            
-            monthTitle.textContent = `${year} 年 ${month + 1} 月`;
-            calendarGrid.innerHTML = '';
-
-            // 取得該月第一天是星期幾（0=日, 1=一...）
-            const firstDayOfMonth = new Date(year, month, 1).getDay();
-            // 取得該月總天數
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-            // 填補開頭的空白
-            for (let i = 0; i < firstDayOfMonth; i++) {
-                const emptyCell = document.createElement('div');
-                emptyCell.className = 'day-cell';
-                calendarGrid.appendChild(emptyCell);
-            }
-            
-            // 填入日曆天數
-            for (let i = 1; i <= daysInMonth; i++) {
-                const dayCell = document.createElement('div');
-                dayCell.className = 'day-cell normal-day';
-                dayCell.textContent = i;
-                
-                // 如果是今天，加上 'today' class
-                if (year === today.getFullYear() && month === today.getMonth() && i === today.getDate()) {
-                    dayCell.classList.add('today');
-                }
-                
-                calendarGrid.appendChild(dayCell);
-            }
+function renderCalendar(date) {
+    const monthTitle = document.getElementById('month-title');
+    const calendarGrid = document.getElementById('calendar-grid');
+    
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const today = new Date();
+    
+    monthTitle.textContent = `${year} 年 ${month + 1} 月`;
+    calendarGrid.innerHTML = '';
+    
+    // 取得該月第一天是星期幾（0=日, 1=一...）
+    const firstDayOfMonth = new Date(year, month, 1).getDay();
+    // 取得該月總天數
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    
+    // 填補開頭的空白
+    for (let i = 0; i < firstDayOfMonth; i++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.className = 'day-cell';
+        calendarGrid.appendChild(emptyCell);
+    }
+    
+    // 填入日曆天數
+    for (let i = 1; i <= daysInMonth; i++) {
+        const dayCell = document.createElement('div');
+        dayCell.className = 'day-cell normal-day';
+        dayCell.textContent = i;
+        
+        // 如果是今天，加上 'today' class
+        if (year === today.getFullYear() && month === today.getMonth() && i === today.getDate()) {
+            dayCell.classList.add('today');
         }
-
+        
+        calendarGrid.appendChild(dayCell);
+    }
+}
+// 新增：渲染每日紀錄的函式
+function renderDailyRecords(dateKey) {
+    const dailyRecordsCard = document.getElementById('daily-records-card');
+    const dailyRecordsTitle = document.getElementById('daily-records-title');
+    const dailyRecordsList = document.getElementById('daily-records-list');
+    const dailyRecordsEmpty = document.getElementById('daily-records-empty');
+    
+    dailyRecordsTitle.textContent = `${dateKey} 打卡紀錄`;
+    dailyRecordsList.innerHTML = '';
+    
+    const records = mockDailyRecords[dateKey] || [];
+    
+    if (records.length > 0) {
+        dailyRecordsEmpty.style.display = 'none';
+        records.forEach(record => {
+            const li = document.createElement('li');
+            li.className = 'p-3 bg-gray-50 rounded-lg';
+            li.innerHTML = `
+                        <p class="font-medium text-gray-800">${record.time} - ${record.type}</p>
+                        <p class="text-sm text-gray-500">${record.location}</p>
+                        <p class="text-sm text-gray-500">備註：${record.notes}</p>
+                    `;
+            dailyRecordsList.appendChild(li);
+        });
+    } else {
+        dailyRecordsEmpty.style.display = 'block';
+    }
+    
+    dailyRecordsCard.style.display = 'block';
+}
 document.addEventListener('DOMContentLoaded', async () => {
     const loginBtn = document.getElementById('login-btn');
     const logoutBtn = document.getElementById('logout-btn');
@@ -247,13 +276,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById(tabId).style.display = 'block';
         document.getElementById(`tab-${tabId.replace('-view', '-btn')}`).classList.replace('bg-gray-200', 'bg-indigo-600');
         document.getElementById(`tab-${tabId.replace('-view', '-btn')}`).classList.replace('text-gray-600', 'text-white');
-
+        
         // 如果切換到月份檢視，渲染日曆
         if (tabId === 'monthly-view') {
             renderCalendar(currentMonthDate);
         }
     };
-
+    
     // 語系初始化
     const browserLang = navigator.language || navigator.userLanguage;
     if (browserLang.startsWith("zh")) {
@@ -269,11 +298,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     localStorage.setItem("lang", currentLang);
     await loadTranslations(currentLang);
-
+    
     // 初始文字設定
     document.getElementById("appTitle").textContent = t("APP_TITLE");
     document.getElementById("status").textContent = t("CHECKING_LOGIN");
-
+    
     const params = new URLSearchParams(window.location.search);
     const otoken = params.get('code');
     
@@ -292,19 +321,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else {
         ensureLogin();
     }
-
+    
     // 綁定按鈕事件
     loginBtn.onclick = () => {
         callApi("getLoginUrl", (res) => {
             if (res.url) window.location.href = res.url;
         });
     };
-
+    
     logoutBtn.onclick = () => {
         localStorage.removeItem("sessionToken");
         window.location.href = "/Attendance-System"
     };
-
+    
     function doPunch(type) {
         if (!navigator.geolocation) {
             showNotification(t("ERROR_GEOLOCATION", {msg: "您的瀏覽器不支援地理位置功能。"}), "error");
@@ -323,10 +352,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             showNotification(t("ERROR_GEOLOCATION", {msg: err.message}), "error");
         });
     }
-
+    
     punchInBtn.addEventListener('click', () => doPunch("上班"));
     punchOutBtn.addEventListener('click', () => doPunch("下班"));
-
+    
     // 處理補打卡表單
     abnormalList.addEventListener('click', (e) => {
         if (e.target.classList.contains('adjust-btn')) {
@@ -356,14 +385,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             adjustDateTimeInput.value = `${date}T${defaultTime}`;
         }
     });
-
+    
     function validateAdjustTime(value) {
         const selected = new Date(value);
         const now = new Date();
         let yesterday = new Date();
         yesterday.setDate(yesterday.getDate() - 1);
         const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-
+        
         if (selected < monthStart) {
             showNotification(t("ERR_BEFORE_MONTH_START"), "error");
             return false;
@@ -374,7 +403,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         return true;
     }
-
+    
     adjustmentFormContainer.addEventListener('click', (e) => {
         if (e.target.classList.contains('submit-adjust-btn')) {
             const datetime = document.getElementById("adjustDateTime").value;
@@ -384,7 +413,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return;
             }
             if (!validateAdjustTime(datetime)) return;
-
+            
             callApiAdjustPunch(type === 'in' ? "上班" : "下班", datetime, (res) => {
                 const msg = t(res.code || "UNKNOWN_ERROR", res.params || {});
                 showNotification(msg, res.ok ? "success" : "error");
@@ -409,5 +438,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('next-month').addEventListener('click', () => {
         currentMonthDate.setMonth(currentMonthDate.getMonth() + 1);
         renderCalendar(currentMonthDate);
+    });
+    
+    // 新增：點擊日曆日期的事件監聽器
+    calendarGrid.addEventListener('click', (e) => {
+        if (e.target.classList.contains('day-cell') && e.target.dataset.date) {
+            const date = e.target.dataset.date;
+            renderDailyRecords(date);
+        }
     });
 });
