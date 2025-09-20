@@ -238,7 +238,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const switchTab = (tabId) => {
         const tabs = ['dashboard-view', 'monthly-view', 'location-view'];
         const btns = ['tab-dashboard-btn', 'tab-monthly-btn', 'tab-location-btn'];
-
+        
         tabs.forEach(id => document.getElementById(id).style.display = 'none');
         btns.forEach(id => document.getElementById(id).classList.replace('bg-indigo-600', 'bg-gray-200'));
         btns.forEach(id => document.getElementById(id).classList.replace('text-white', 'text-gray-600'));
@@ -246,6 +246,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById(tabId).style.display = 'block';
         document.getElementById(`tab-${tabId.replace('-view', '-btn')}`).classList.replace('bg-gray-200', 'bg-indigo-600');
         document.getElementById(`tab-${tabId.replace('-view', '-btn')}`).classList.replace('text-gray-600', 'text-white');
+
+        // 如果切換到月份檢視，渲染日曆
+        if (tabId === 'monthly-view') {
+            renderCalendar(currentMonthDate);
+        }
     };
 
     // 語系初始化
@@ -384,4 +389,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     tabDashboardBtn.addEventListener('click', () => switchTab('dashboard-view'));
     tabMonthlyBtn.addEventListener('click', () => switchTab('monthly-view'));
     tabLocationBtn.addEventListener('click', () => switchTab('location-view'));
+    
+    // 月曆按鈕事件
+    document.getElementById('prev-month').addEventListener('click', () => {
+        currentMonthDate.setMonth(currentMonthDate.getMonth() - 1);
+        renderCalendar(currentMonthDate);
+    });
+    
+    document.getElementById('next-month').addEventListener('click', () => {
+        currentMonthDate.setMonth(currentMonthDate.getMonth() + 1);
+        renderCalendar(currentMonthDate);
+    });
 });
