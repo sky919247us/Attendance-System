@@ -158,26 +158,26 @@ function checkAbnormal() {
             const recordsEmpty = document.getElementById("records-empty");
             
             if (res.records.length > 0) {
-                abnormalRecordsSection.style.display = 'block';
-                recordsEmpty.style.display = 'none';
-                abnormalList.innerHTML = '';
-                res.records.forEach(record => {
-                    const li = document.createElement('li');
-                    li.className = 'p-3 bg-gray-50 rounded-lg flex justify-between items-center';
-                    li.innerHTML = `
-                        <div>
-                            <p class="font-medium text-gray-800">${record.date}</p>
-                            <p class="text-sm text-red-600">${record.reason}</p>
-                        </div>
-                        <button data-date="${record.date}" class="adjust-btn text-sm font-semibold text-indigo-600 hover:text-indigo-800">補打卡</button>
-                    `;
-                    abnormalList.appendChild(li);
-                });
-            } else {
-                abnormalRecordsSection.style.display = 'block';
-                recordsEmpty.style.display = 'block';
-                abnormalList.innerHTML = '';
-            }
+                                    abnormalRecordsSection.style.display = 'block';
+                                    recordsEmpty.style.display = 'none';
+                                    abnormalList.innerHTML = '';
+                                    res.records.forEach(record => {
+                                        const li = document.createElement('li');
+                                        li.className = 'p-3 bg-gray-50 rounded-lg flex justify-between items-center';
+                                        li.innerHTML = `
+                                            <div>
+                                                <p class="font-medium text-gray-800">${record.date}</p>
+                                                <p class="text-sm text-red-600">${record.reason}</p>
+                                            </div>
+                                            <button data-date="${record.date}" data-reason="${record.reason}" class="adjust-btn text-sm font-semibold text-indigo-600 hover:text-indigo-800">補打卡</button>
+                                        `;
+                                        abnormalList.appendChild(li);
+                                    });
+                                } else {
+                                    abnormalRecordsSection.style.display = 'block';
+                                    recordsEmpty.style.display = 'block';
+                                    abnormalList.innerHTML = '';
+                                }
         } else {
             console.error("Failed to fetch abnormal records:", res.msg);
             showNotification(t("ERROR_FETCH_RECORDS"), "error");
@@ -331,6 +331,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     abnormalList.addEventListener('click', (e) => {
         if (e.target.classList.contains('adjust-btn')) {
             const date = e.target.dataset.date;
+            const reason = e.target.dataset.reason;
             const formHtml = `
                 <div class="p-4 border-t border-gray-200 fade-in">
                     <p class="font-semibold mb-2">補打卡：<span class="text-indigo-600">${date}</span></p>
@@ -345,6 +346,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </div>
             `;
             adjustmentFormContainer.innerHTML = formHtml;
+            
+            const adjustDateTimeInput = document.getElementById("adjustDateTime");
+            // 根據異常原因，自動帶入預設時間
+            let defaultTime = "09:00"; // 預設為上班時間
+            if (reason.includes("下班")) {
+                defaultTime = "18:00";
+            }
+            adjustDateTimeInput.value = `${date}T${defaultTime}`;
         }
     });
 
