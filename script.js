@@ -2,6 +2,7 @@
 
 
 let currentLang = localStorage.getItem("lang");
+let currentMonthDate = new Date();
 let translations = {};
 
 // 載入語系檔
