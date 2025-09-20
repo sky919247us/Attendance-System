@@ -263,7 +263,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const tabLocationBtn = document.getElementById('tab-location-btn');
     const abnormalList = document.getElementById('abnormal-list');
     const adjustmentFormContainer = document.getElementById('adjustment-form-container');
-    
+    const calendarGrid = document.getElementById('calendar-grid');
     // UI切換邏輯
     const switchTab = (tabId) => {
         const tabs = ['dashboard-view', 'monthly-view', 'location-view'];
