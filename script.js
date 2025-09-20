@@ -184,6 +184,45 @@ function checkAbnormal() {
     });
 }
 
+// 新增：渲染日曆的函式
+        function renderCalendar(date) {
+            const monthTitle = document.getElementById('month-title');
+            const calendarGrid = document.getElementById('calendar-grid');
+            
+            const year = date.getFullYear();
+            const month = date.getMonth();
+            const today = new Date();
+            
+            monthTitle.textContent = `${year} 年 ${month + 1} 月`;
+            calendarGrid.innerHTML = '';
+
+            // 取得該月第一天是星期幾（0=日, 1=一...）
+            const firstDayOfMonth = new Date(year, month, 1).getDay();
+            // 取得該月總天數
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            // 填補開頭的空白
+            for (let i = 0; i < firstDayOfMonth; i++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.className = 'day-cell';
+                calendarGrid.appendChild(emptyCell);
+            }
+            
+            // 填入日曆天數
+            for (let i = 1; i <= daysInMonth; i++) {
+                const dayCell = document.createElement('div');
+                dayCell.className = 'day-cell normal-day';
+                dayCell.textContent = i;
+                
+                // 如果是今天，加上 'today' class
+                if (year === today.getFullYear() && month === today.getMonth() && i === today.getDate()) {
+                    dayCell.classList.add('today');
+                }
+                
+                calendarGrid.appendChild(dayCell);
+            }
+        }
+
 document.addEventListener('DOMContentLoaded', async () => {
     const loginBtn = document.getElementById('login-btn');
     const logoutBtn = document.getElementById('logout-btn');
