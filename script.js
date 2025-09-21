@@ -1,14 +1,21 @@
 // 使用 CDN 或絕對路徑來載入 JSON 檔案
-
+// 注意：本檔案需要依賴 config.js，請確保它在腳本之前被載入。
 
 let currentLang = localStorage.getItem("lang");
 let currentMonthDate = new Date();
 let translations = {};
+let monthDataCache = {}; // 新增：用於快取月份打卡資料
+let isApiCalled = false; // 新增：用於追蹤 API 呼叫狀態，避免重複呼叫
+
+const API_CONFIG = {
+    // 預設的 API URL，應由外部 config.js 覆蓋
+    apiUrl: ""
+};
 
 // 載入語系檔
 async function loadTranslations(lang) {
     try {
-        const res = await fetch(`i18n/${lang}.json`);
+        const res = await fetch(`https://0rigind1865-bit.github.io/Attendance-System/i18n/${lang}.json`);
         if (!res.ok) {
             throw new Error(`HTTP 錯誤: ${res.status}`);
         }
@@ -34,20 +41,20 @@ function callApi(action, cb, loadingId = "loading") {
     const token = localStorage.getItem("sessionToken");
     const url = `${API_CONFIG.apiUrl}?action=${action}&token=${token}&callback=handleResponse`;
     const script = document.createElement("script");
-    
+
     // 顯示指定 loading
     const loadingEl = document.getElementById(loadingId);
-    if(loadingEl) loadingEl.style.display = "block";
-    
+    if (loadingEl) loadingEl.style.display = "block";
+
+    // 處理 JSONP 回應
     window.handleResponse = (res) => {
-        res.msg = t(res.code);
-        if(loadingEl) loadingEl.style.display = "none";
+        if (loadingEl) loadingEl.style.display = "none";
         cb(res);
         if (script.parentNode) {
             script.parentNode.removeChild(script);
         }
     };
-    
+
     script.src = url;
     script.onerror = () => showNotification(t("CONNECTION_FAILED"), "error");
     document.body.appendChild(script);
@@ -69,17 +76,17 @@ function callApiAdjustPunch(type, datetime, cb) {
     const dateObj = new Date(datetime);
     const lat = 0;
     const lng = 0;
-    
+
     const url = `${API_CONFIG.apiUrl}?action=adjustPunch&token=${token}&type=${encodeURIComponent(type)}&lat=${lat}&lng=${lng}&datetime=${dateObj.toISOString()}&callback=handleAdjustResponse&note=${encodeURIComponent(navigator.userAgent)}`;
     const script = document.createElement("script");
     const loadingEl = document.getElementById("loadingMsg");
-    if(loadingEl) loadingEl.style.display = "block";
-    
+    if (loadingEl) loadingEl.style.display = "block";
+
     window.handleAdjustResponse = (res) => {
-        if(loadingEl) loadingEl.style.display = "none";
+        if (loadingEl) loadingEl.style.display = "none";
         cb(res);
     };
-    
+
     script.src = url;
     script.onerror = () => showNotification(t("CONNECTION_FAILED"), "error");
     document.body.appendChild(script);
@@ -104,22 +111,24 @@ const showNotification = (message, type = 'success') => {
     }, 3000);
 };
 
+// 確保登入
 function ensureLogin() {
     return new Promise((resolve) => {
         if (localStorage.getItem("sessionToken")) {
             document.getElementById("status").textContent = t("CHECKING_LOGIN");
             callApi("checkSession", (res) => {
+                res.msg = t(res.code);
                 if (res.ok) {
                     document.getElementById("user-name").textContent = res.user.name;
                     document.getElementById("profile-img").src = res.user.picture || res.user.rate;
-                    
+
                     localStorage.setItem("sessionUserId", res.user.userId);
                     showNotification(t("LOGIN_SUCCESS"));
-                    
+
                     document.getElementById('login-section').style.display = 'none';
                     document.getElementById('user-header').style.display = 'flex';
                     document.getElementById('main-app').style.display = 'block';
-                    
+
                     // 檢查異常打卡
                     checkAbnormal();
                     resolve(true);
@@ -133,8 +142,7 @@ function ensureLogin() {
                     resolve(false);
                 }
             });
-        }
-        else {
+        } else {
             document.getElementById('login-btn').style.display = 'block';
             document.getElementById('user-header').style.display = 'none';
             document.getElementById('main-app').style.display = 'none';
@@ -147,19 +155,19 @@ function ensureLogin() {
 //檢查本月打卡異常
 function checkAbnormal() {
     const now = new Date();
-    const month = now.getFullYear() + "-" + String(now.getMonth()+1).padStart(2,"0");
+    const month = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0");
     const userId = localStorage.getItem("sessionUserId");
-    
+
     const recordsLoading = document.getElementById("records-loading");
     recordsLoading.style.display = 'block';
-    
+
     callApi(`getAbnormalRecords&month=${month}&userId=${userId}`, (res) => {
         recordsLoading.style.display = 'none';
         if (res.ok) {
             const abnormalRecordsSection = document.getElementById("abnormal-records-section");
             const abnormalList = document.getElementById("abnormal-list");
             const recordsEmpty = document.getElementById("records-empty");
-            
+
             if (res.records.length > 0) {
                 abnormalRecordsSection.style.display = 'block';
                 recordsEmpty.style.display = 'none';
@@ -168,12 +176,12 @@ function checkAbnormal() {
                     const li = document.createElement('li');
                     li.className = 'p-3 bg-gray-50 rounded-lg flex justify-between items-center';
                     li.innerHTML = `
-                                            <div>
-                                                <p class="font-medium text-gray-800">${record.date}</p>
-                                                <p class="text-sm text-red-600">${record.reason}</p>
-                                            </div>
-                                            <button data-date="${record.date}" data-reason="${record.reason}" class="adjust-btn text-sm font-semibold text-indigo-600 hover:text-indigo-800">補打卡</button>
-                                        `;
+                        <div>
+                            <p class="font-medium text-gray-800">${record.date}</p>
+                            <p class="text-sm text-red-600">${record.reason}</p>
+                        </div>
+                        <button data-date="${record.date}" data-reason="${record.reason}" class="adjust-btn text-sm font-semibold text-indigo-600 hover:text-indigo-800">補打卡</button>
+                    `;
                     abnormalList.appendChild(li);
                 });
             } else {
@@ -190,35 +198,32 @@ function checkAbnormal() {
 
 // 渲染日曆的函式
 function renderCalendar(date) {
-    const userId = localStorage.getItem("sessionUserId");
     const monthTitle = document.getElementById('month-title');
     const calendarGrid = document.getElementById('calendar-grid');
     const year = date.getFullYear();
     const month = date.getMonth();
     const today = new Date();
-    
+
     monthTitle.textContent = `${year} 年 ${month + 1} 月`;
     calendarGrid.innerHTML = '';
-    
+
     const firstDayOfMonth = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
-    
+
     for (let i = 0; i < firstDayOfMonth; i++) {
         const emptyCell = document.createElement('div');
         emptyCell.className = 'day-cell';
         calendarGrid.appendChild(emptyCell);
     }
-    
+
     for (let i = 1; i <= daysInMonth; i++) {
         const dayCell = document.createElement('div');
         const cellDate = new Date(year, month, i);
         dayCell.textContent = i;
-        
-        // 判斷日期類型並賦予 class
-        let dateKey = `${year}-${month + 1}-${i}`;
+
+        let dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
         let dateClass = 'normal-day';
-                
-        // 判斷是否為今天
+
         const isToday = (year === today.getFullYear() && month === today.getMonth() && i === today.getDate());
         if (isToday) {
             dayCell.classList.add('today');
@@ -228,51 +233,69 @@ function renderCalendar(date) {
         } else {
             dayCell.classList.add(dateClass);
         }
-        
+
         dayCell.classList.add('day-cell');
         dayCell.dataset.date = dateKey;
-        
+
         calendarGrid.appendChild(dayCell);
     }
 }
-// 新增：渲染每日紀錄的函式
+// 新增：渲染每日紀錄的函式 (修正非同步問題)
 function renderDailyRecords(dateKey) {
     const dailyRecordsCard = document.getElementById('daily-records-card');
     const dailyRecordsTitle = document.getElementById('daily-records-title');
     const dailyRecordsList = document.getElementById('daily-records-list');
     const dailyRecordsEmpty = document.getElementById('daily-records-empty');
-    
+    const recordsLoading = document.getElementById("records-loading");
+
     dailyRecordsTitle.textContent = `${dateKey} 打卡紀錄`;
     dailyRecordsList.innerHTML = '';
-    let records =[];
-    //const month = dateKey.getMonth();
+    dailyRecordsEmpty.style.display = 'none';
+    recordsLoading.style.display = 'block';
+
     const dateObject = new Date(dateKey);
-    const month = dateObject.getFullYear() + "-" + String(dateObject.getMonth()+1).padStart(2,"0");
+    const month = dateObject.getFullYear() + "-" + String(dateObject.getMonth() + 1).padStart(2, "0");
     const userId = localStorage.getItem("sessionUserId");
-    callApi(`getAttendanceDetails&month=${month}&userId=${userId}`, (res) => {
-        if (res.ok) {
-            records=res.records;
-        }
-    });
- 
-    
-    if (records.length > 0) {
-        dailyRecordsEmpty.style.display = 'none';
-        records.forEach(record => {
-            const li = document.createElement('li');
-            li.className = 'p-3 bg-gray-50 rounded-lg';
-            li.innerHTML = `
-                        <p class="font-medium text-gray-800">${record.time} - ${record.type}</p>
-                        <p class="text-sm text-gray-500">${record.location}</p>
-                        <p class="text-sm text-gray-500">備註：${record.notes}</p>
-                    `;
-            dailyRecordsList.appendChild(li);
-        });
+
+    // 檢查快取
+    if (monthDataCache[month]) {
+        renderRecords(monthDataCache[month]);
+        recordsLoading.style.display = 'none';
     } else {
-        dailyRecordsEmpty.style.display = 'block';
+        // 否則從 API 取得資料
+        callApi(`getAttendanceDetails&month=${month}&userId=${userId}`, (res) => {
+            recordsLoading.style.display = 'none';
+            if (res.ok) {
+                // 將資料存入快取
+                monthDataCache[month] = res.records;
+                renderRecords(res.records);
+            } else {
+                console.error("Failed to fetch attendance records:", res.msg);
+                showNotification(t("ERROR_FETCH_RECORDS"), "error");
+            }
+        });
     }
-    
-    dailyRecordsCard.style.display = 'block';
+
+    function renderRecords(records) {
+        // 從該月份的所有紀錄中，過濾出所選日期的紀錄
+        const dailyRecords = records.filter(record => record.date === dateKey);
+        if (dailyRecords.length > 0) {
+            dailyRecordsEmpty.style.display = 'none';
+            dailyRecords.forEach(record => {
+                const li = document.createElement('li');
+                li.className = 'p-3 bg-gray-50 rounded-lg';
+                li.innerHTML = `
+                    <p class="font-medium text-gray-800">${record.time} - ${record.type}</p>
+                    <p class="text-sm text-gray-500">${record.location}</p>
+                    <p class="text-sm text-gray-500">備註：${record.notes}</p>
+                `;
+                dailyRecordsList.appendChild(li);
+            });
+        } else {
+            dailyRecordsEmpty.style.display = 'block';
+        }
+        dailyRecordsCard.style.display = 'block';
+    }
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -286,25 +309,26 @@ document.addEventListener('DOMContentLoaded', async () => {
     const abnormalList = document.getElementById('abnormal-list');
     const adjustmentFormContainer = document.getElementById('adjustment-form-container');
     const calendarGrid = document.getElementById('calendar-grid');
+
     // UI切換邏輯
     const switchTab = (tabId) => {
         const tabs = ['dashboard-view', 'monthly-view', 'location-view'];
         const btns = ['tab-dashboard-btn', 'tab-monthly-btn', 'tab-location-btn'];
-        
+
         tabs.forEach(id => document.getElementById(id).style.display = 'none');
         btns.forEach(id => document.getElementById(id).classList.replace('bg-indigo-600', 'bg-gray-200'));
         btns.forEach(id => document.getElementById(id).classList.replace('text-white', 'text-gray-600'));
-        
+
         document.getElementById(tabId).style.display = 'block';
         document.getElementById(`tab-${tabId.replace('-view', '-btn')}`).classList.replace('bg-gray-200', 'bg-indigo-600');
         document.getElementById(`tab-${tabId.replace('-view', '-btn')}`).classList.replace('text-gray-600', 'text-white');
-        
+
         // 如果切換到月份檢視，渲染日曆
         if (tabId === 'monthly-view') {
             renderCalendar(currentMonthDate);
         }
     };
-    
+
     // 語系初始化
     const browserLang = navigator.language || navigator.userLanguage;
     if (browserLang.startsWith("zh")) {
@@ -320,48 +344,47 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     localStorage.setItem("lang", currentLang);
     await loadTranslations(currentLang);
-    
+
     // 初始文字設定
     document.getElementById("appTitle").textContent = t("APP_TITLE");
     document.getElementById("status").textContent = t("SUBTITLE_LOGIN");
-    
+
     const params = new URLSearchParams(window.location.search);
     const otoken = params.get('code');
-    
+
     if (otoken) {
         exchangeToken("getProfile", otoken, (res) => {
             if (res.ok && res.sToken) {
                 localStorage.setItem("sessionToken", res.sToken);
-                // 成功登入後，移除網址中的 'code' 參數以避免重新整理錯誤
                 history.replaceState({}, '', window.location.pathname);
                 ensureLogin();
             } else {
-                showNotification(t("ERROR_LOGIN_FAILED", {msg: res.msg || t("UNKNOWN_ERROR")}), "error");
+                showNotification(t("ERROR_LOGIN_FAILED", { msg: res.msg || t("UNKNOWN_ERROR") }), "error");
                 loginBtn.style.display = 'block';
             }
         });
     } else {
         ensureLogin();
     }
-    
+
     // 綁定按鈕事件
     loginBtn.onclick = () => {
         callApi("getLoginUrl", (res) => {
             if (res.url) window.location.href = res.url;
         });
     };
-    
+
     logoutBtn.onclick = () => {
         localStorage.removeItem("sessionToken");
         window.location.href = "/Attendance-System"
     };
-    
+
     function doPunch(type) {
         if (!navigator.geolocation) {
-            showNotification(t("ERROR_GEOLOCATION", {msg: "您的瀏覽器不支援地理位置功能。"}), "error");
+            showNotification(t("ERROR_GEOLOCATION", { msg: "您的瀏覽器不支援地理位置功能。" }), "error");
             return;
         }
-        
+
         navigator.geolocation.getCurrentPosition((pos) => {
             const lat = pos.coords.latitude;
             const lng = pos.coords.longitude;
@@ -371,13 +394,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 showNotification(msg, res.ok ? "success" : "error");
             });
         }, (err) => {
-            showNotification(t("ERROR_GEOLOCATION", {msg: err.message}), "error");
+            showNotification(t("ERROR_GEOLOCATION", { msg: err.message }), "error");
         });
     }
-    
+
     punchInBtn.addEventListener('click', () => doPunch("上班"));
     punchOutBtn.addEventListener('click', () => doPunch("下班"));
-    
+
     // 處理補打卡表單
     abnormalList.addEventListener('click', (e) => {
         if (e.target.classList.contains('adjust-btn')) {
@@ -397,9 +420,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </div>
             `;
             adjustmentFormContainer.innerHTML = formHtml;
-            
+
             const adjustDateTimeInput = document.getElementById("adjustDateTime");
-            // 根據異常原因，自動帶入預設時間
             let defaultTime = "09:00"; // 預設為上班時間
             if (reason.includes("下班")) {
                 defaultTime = "18:00";
@@ -407,14 +429,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             adjustDateTimeInput.value = `${date}T${defaultTime}`;
         }
     });
-    
+
     function validateAdjustTime(value) {
         const selected = new Date(value);
         const now = new Date();
-        let yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1);
+        const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
         const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-        
+
         if (selected < monthStart) {
             showNotification(t("ERR_BEFORE_MONTH_START"), "error");
             return false;
@@ -425,7 +446,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         return true;
     }
-    
+
     adjustmentFormContainer.addEventListener('click', (e) => {
         if (e.target.classList.contains('submit-adjust-btn')) {
             const datetime = document.getElementById("adjustDateTime").value;
@@ -435,34 +456,35 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return;
             }
             if (!validateAdjustTime(datetime)) return;
-            
+
             callApiAdjustPunch(type === 'in' ? "上班" : "下班", datetime, (res) => {
                 const msg = t(res.code || "UNKNOWN_ERROR", res.params || {});
                 showNotification(msg, res.ok ? "success" : "error");
                 if (res.ok) {
                     adjustmentFormContainer.innerHTML = '';
+                    checkAbnormal(); // 補打卡成功後，重新檢查異常紀錄
                 }
             });
         }
     });
-    
+
     // 頁面切換事件
     tabDashboardBtn.addEventListener('click', () => switchTab('dashboard-view'));
     tabMonthlyBtn.addEventListener('click', () => switchTab('monthly-view'));
     tabLocationBtn.addEventListener('click', () => switchTab('location-view'));
-    
+
     // 月曆按鈕事件
     document.getElementById('prev-month').addEventListener('click', () => {
         currentMonthDate.setMonth(currentMonthDate.getMonth() - 1);
         renderCalendar(currentMonthDate);
     });
-    
+
     document.getElementById('next-month').addEventListener('click', () => {
         currentMonthDate.setMonth(currentMonthDate.getMonth() + 1);
         renderCalendar(currentMonthDate);
     });
-    
-    // 新增：點擊日曆日期的事件監聽器
+
+    // 點擊日曆日期的事件監聽器
     calendarGrid.addEventListener('click', (e) => {
         if (e.target.classList.contains('day-cell') && e.target.dataset.date) {
             const date = e.target.dataset.date;
