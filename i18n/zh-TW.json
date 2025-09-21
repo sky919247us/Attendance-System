@@ -1,6 +1,7 @@
 {
   "APP_TITLE": "打卡系統",
   "CHECKING_LOGIN": "正在檢查登入狀態…",
+  "SUBTITLE_LOGIN": "歡迎使用打卡系統",
   "FOOTER_NOTICE": "※ 登入狀態保存在你的瀏覽器（localStorage）。若換裝置或清除資料需重新登入。",
   
   "ADJUST_PUNCH_TITLE": "補打卡",

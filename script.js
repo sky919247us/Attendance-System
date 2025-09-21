@@ -108,6 +108,7 @@ function ensureLogin() {
     return new Promise((resolve) => {
         if (localStorage.getItem("sessionToken")) {
             callApi("checkSession", (res) => {
+                document.getElementById("status").textContent = t("CHECKING_LOGIN");
                 if (res.ok) {
                     document.getElementById("user-name").textContent = res.user.name;
                     document.getElementById("profile-img").src = res.user.picture || res.user.rate;
@@ -125,6 +126,7 @@ function ensureLogin() {
                 } else {
                     const errorMsg = t(res.code || "UNKNOWN_ERROR");
                     showNotification(`❌ ${errorMsg}`, "error");
+                    document.getElementById("status").textContent = t("PLEASE_RELOGIN");
                     document.getElementById('login-btn').style.display = 'block';
                     document.getElementById('user-header').style.display = 'none';
                     document.getElementById('main-app').style.display = 'none';
@@ -136,6 +138,8 @@ function ensureLogin() {
             document.getElementById('login-btn').style.display = 'block';
             document.getElementById('user-header').style.display = 'none';
             document.getElementById('main-app').style.display = 'none';
+            document.getElementById("status").textContent = t("SUBTITLE_LOGIN");
+            
             resolve(false);
         }
     });
@@ -261,6 +265,7 @@ function renderDailyRecords(dateKey) {
     
     dailyRecordsCard.style.display = 'block';
 }
+
 document.addEventListener('DOMContentLoaded', async () => {
     const loginBtn = document.getElementById('login-btn');
     const logoutBtn = document.getElementById('logout-btn');
@@ -309,7 +314,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // 初始文字設定
     document.getElementById("appTitle").textContent = t("APP_TITLE");
-    document.getElementById("status").textContent = t("CHECKING_LOGIN");
+    document.getElementById("status").textContent = t("SUBTITLE_LOGIN");
     
     const params = new URLSearchParams(window.location.search);
     const otoken = params.get('code');
