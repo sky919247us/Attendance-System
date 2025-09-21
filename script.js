@@ -107,8 +107,8 @@ const showNotification = (message, type = 'success') => {
 function ensureLogin() {
     return new Promise((resolve) => {
         if (localStorage.getItem("sessionToken")) {
+            document.getElementById("status").textContent = t("CHECKING_LOGIN");
             callApi("checkSession", (res) => {
-                document.getElementById("status").textContent = t("CHECKING_LOGIN");
                 if (res.ok) {
                     document.getElementById("user-name").textContent = res.user.name;
                     document.getElementById("profile-img").src = res.user.picture || res.user.rate;
@@ -139,7 +139,6 @@ function ensureLogin() {
             document.getElementById('user-header').style.display = 'none';
             document.getElementById('main-app').style.display = 'none';
             document.getElementById("status").textContent = t("SUBTITLE_LOGIN");
-            
             resolve(false);
         }
     });
@@ -191,6 +190,7 @@ function checkAbnormal() {
 
 // 渲染日曆的函式
 function renderCalendar(date) {
+    const userId = localStorage.getItem("sessionUserId");
     const monthTitle = document.getElementById('month-title');
     const calendarGrid = document.getElementById('calendar-grid');
     const year = date.getFullYear();
@@ -217,6 +217,13 @@ function renderCalendar(date) {
         // 判斷日期類型並賦予 class
         let dateKey = `${year}-${month + 1}-${i}`;
         let dateClass = mockCalendarData[dateKey] || 'normal-day';
+        
+        callApi(`getAttendanceDetails&month=${month}&userId=${userId}`, (res) => {
+            recordsLoading.style.display = 'none';
+            if (res.ok) {
+                dateClass=res.records;
+            }
+        }
         
         // 判斷是否為今天
         const isToday = (year === today.getFullYear() && month === today.getMonth() && i === today.getDate());
