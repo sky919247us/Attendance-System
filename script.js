@@ -245,10 +245,9 @@ function renderDailyRecords(dateKey) {
     dailyRecordsTitle.textContent = `${dateKey} 打卡紀錄`;
     dailyRecordsList.innerHTML = '';
     let records =[];
-    const month = dateKey.substring(0, 7);
-    const monthKey = `${year}-${String(month + 1).padStart(2, '0')}`;
+    const month = dateKey.getMonth();
     const userId = localStorage.getItem("sessionUserId");
-    callApi(`getAttendanceDetails&month=${monthKey}&userId=${userId}`, (res) => {
+    callApi(`getAttendanceDetails&month=${month}&userId=${userId}`, (res) => {
         if (res.ok) {
             records=res.records;
         }
@@ -464,8 +463,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 新增：點擊日曆日期的事件監聽器
     calendarGrid.addEventListener('click', (e) => {
         if (e.target.classList.contains('day-cell') && e.target.dataset.date) {
-            const date = e.target.dataset.date;
-            renderDailyRecords(date);
+            const dateString = e.target.dataset.date;
+            const dateObject = new Date(dateString);
+            renderDailyRecords(dateObject);
         }
     });
 });
