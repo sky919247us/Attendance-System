@@ -7,10 +7,6 @@ let translations = {};
 let monthDataCache = {}; // 新增：用於快取月份打卡資料
 let isApiCalled = false; // 新增：用於追蹤 API 呼叫狀態，避免重複呼叫
 
-const API_CONFIG = {
-    // 預設的 API URL，應由外部 config.js 覆蓋
-    apiUrl: ""
-};
 
 // 載入語系檔
 async function loadTranslations(lang) {
