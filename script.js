@@ -216,7 +216,7 @@ function renderCalendar(date) {
         
         // 判斷日期類型並賦予 class
         let dateKey = `${year}-${month + 1}-${i}`;
-        let dateClass = mockCalendarData[dateKey] || 'normal-day';
+        let dateClass = 'normal-day';
         
         callApi(`getAttendanceDetails&month=${month}&userId=${userId}`, (res) => {
             recordsLoading.style.display = 'none';
