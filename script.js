@@ -247,7 +247,7 @@ function renderDailyRecords(dateKey) {
     let records =[];
     //const month = dateKey.getMonth();
     const dateObject = new Date(dateKey);
-    const month = dateObject.getFullYear() + "-" + String(now.getMonth()+1).padStart(2,"0");
+    const month = dateObject.getFullYear() + "-" + String(dateObject.getMonth()+1).padStart(2,"0");
     const userId = localStorage.getItem("sessionUserId");
     callApi(`getAttendanceDetails&month=${month}&userId=${userId}`, (res) => {
         if (res.ok) {
