@@ -217,13 +217,7 @@ function renderCalendar(date) {
         // 判斷日期類型並賦予 class
         let dateKey = `${year}-${month + 1}-${i}`;
         let dateClass = 'normal-day';
-        
-        callApi(`getAttendanceDetails&month=${month}&userId=${userId}`, (res) => {            
-            if (res.ok) {
-                dateClass=res.records;
-            }
-        });
-        
+                
         // 判斷是否為今天
         const isToday = (year === today.getFullYear() && month === today.getMonth() && i === today.getDate());
         if (isToday) {
@@ -250,8 +244,13 @@ function renderDailyRecords(dateKey) {
     
     dailyRecordsTitle.textContent = `${dateKey} 打卡紀錄`;
     dailyRecordsList.innerHTML = '';
-    
-    const records = mockDailyRecords[dateKey] || [];
+    let records =[];
+    callApi(`getAttendanceDetails&month=${month}&userId=${userId}`, (res) => {
+        if (res.ok) {
+            records=res.records;
+        }
+    });
+ 
     
     if (records.length > 0) {
         dailyRecordsEmpty.style.display = 'none';
