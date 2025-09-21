@@ -245,7 +245,7 @@ function renderDailyRecords(dateKey) {
     dailyRecordsTitle.textContent = `${dateKey} 打卡紀錄`;
     dailyRecordsList.innerHTML = '';
     let records =[];
-    const month = dateKey.getMonth();
+    const month = dateKey.substring(0, 7);
     const userId = localStorage.getItem("sessionUserId");
     callApi(`getAttendanceDetails&month=${month}&userId=${userId}`, (res) => {
         if (res.ok) {
