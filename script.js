@@ -246,8 +246,9 @@ function renderDailyRecords(dateKey) {
     dailyRecordsList.innerHTML = '';
     let records =[];
     const month = dateKey.substring(0, 7);
+    const monthKey = `${year}-${String(month + 1).padStart(2, '0')}`;
     const userId = localStorage.getItem("sessionUserId");
-    callApi(`getAttendanceDetails&month=${month}&userId=${userId}`, (res) => {
+    callApi(`getAttendanceDetails&month=${monthKey}&userId=${userId}`, (res) => {
         if (res.ok) {
             records=res.records;
         }
