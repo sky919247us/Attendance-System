@@ -223,7 +223,7 @@ function renderCalendar(date) {
             if (res.ok) {
                 dateClass=res.records;
             }
-        }
+        });
         
         // 判斷是否為今天
         const isToday = (year === today.getFullYear() && month === today.getMonth() && i === today.getDate());
