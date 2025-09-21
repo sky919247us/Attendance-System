@@ -218,8 +218,7 @@ function renderCalendar(date) {
         let dateKey = `${year}-${month + 1}-${i}`;
         let dateClass = 'normal-day';
         
-        callApi(`getAttendanceDetails&month=${month}&userId=${userId}`, (res) => {
-            recordsLoading.style.display = 'none';
+        callApi(`getAttendanceDetails&month=${month}&userId=${userId}`, (res) => {            
             if (res.ok) {
                 dateClass=res.records;
             }
