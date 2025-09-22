@@ -236,6 +236,9 @@ function renderCalendar(date) {
            let dateClass = 'normal-day';
 
            // 直接用快取資料過濾當天紀錄
+           console.log(records);
+           console.log(r.date);
+           console.log(dateKey);
            const todayRecords = records.filter(r => r.date === dateKey);
            console.log(todayRecords.length);
            if (todayRecords.length > 0) {
