@@ -237,10 +237,12 @@ function renderCalendar(date) {
 
            // 直接用快取資料過濾當天紀錄
            const todayRecords = records.filter(r => r.date === dateKey);
-
+           console.log(todayRecords.length);
            if (todayRecords.length > 0) {
                // 依照 reason 給 class，取第一筆 reason 或自定義邏輯
+               console.log(todayRecords);
                const reason = todayRecords[0].reason;
+               console.log(reason);
                switch (reason) {
                    case "未打上班卡":
                        dateClass = 'abnormal-day';
@@ -311,12 +313,8 @@ function renderDailyRecords(dateKey) {
     
     function renderRecords(records) {
         // 從該月份的所有紀錄中，過濾出所選日期的紀錄
-        console.log(records);
-        
         const dailyRecords = records.filter(record =>{
-            console.log(record);
-            console.log(record.date);
-            console.log(dateKey);
+            
             return record.date === dateKey
         });
         console.log(dailyRecords.length);
