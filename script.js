@@ -290,10 +290,15 @@ function renderDailyRecords(dateKey) {
             dailyRecords.forEach(records => {
                 const li = document.createElement('li');
                 li.className = 'p-3 bg-gray-50 rounded-lg';
+                const recordHtml = records.record.map(r => `
+                  <p class="font-medium text-gray-800">${r.time} - ${r.type}</p>
+                  <p class="text-sm text-gray-500">${r.location}</p>
+                  <p class="text-sm text-gray-500">備註：${r.note}</p>
+                `).join("");
+
                 li.innerHTML = `
-                    <p class="font-medium text-gray-800">${records.record.time} - ${records.record.type}</p>
-                    <p class="text-sm text-gray-500">${records.record.location}</p>
-                    <p class="text-sm text-gray-500">備註：${records.reason}</p>
+                  ${recordHtml}
+                  <p class="text-sm text-gray-500">系統判斷：${records.reason}</p>
                 `;
                 dailyRecordsList.appendChild(li);
             });
