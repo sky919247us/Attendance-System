@@ -243,45 +243,6 @@ function callApiAdjustPunch(type, datetime, cb) {
     };
 }
 
-document.getElementById('abnormal-records-list').addEventListener('click', (e) => {
-    if (e.target.tagName === 'BUTTON' && e.target.textContent === '補打卡') {
-        const date = e.target.dataset.date;
-        const type = e.target.dataset.type;
-        const adjustmentFormContainer = document.getElementById("adjustment-form-container");
-        adjustmentFormContainer.innerHTML = `
-            <div class="card p-4 space-y-4">
-                <h3 class="font-semibold text-gray-800">補打卡申請 - ${t(type === 'in' ? '上班' : '下班')}</h3>
-                <input type="datetime-local" id="adjustment-datetime" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                <div class="flex justify-end space-x-2">
-                    <button id="cancel-adjustment" class="btn-secondary">取消</button>
-                    <button id="submit-adjustment" class="btn-primary" data-type="${type}">送出</button>
-                </div>
-            </div>
-        `;
-        document.getElementById('cancel-adjustment').addEventListener('click', () => {
-            adjustmentFormContainer.innerHTML = '';
-        });
-        document.getElementById('submit-adjustment').addEventListener('click', () => {
-            const datetimeInput = document.getElementById('adjustment-datetime');
-            const datetime = datetimeInput.value;
-            if (!datetime) {
-                showNotification("請選擇補打卡日期時間", "error");
-                return;
-            }
-            if (!validateAdjustTime(datetime)) return;
-            callApiAdjustPunch(type, datetime, (res) => {
-                const msg = t(res.code || "UNKNOWN_ERROR", res.params || {});
-                showNotification(msg, res.ok ? "success" : "error");
-                if (res.ok) {
-                    adjustmentFormContainer.innerHTML = '';
-                    checkAbnormal();
-                }
-            });
-        });
-    }
-});
-
-
 function validateAdjustTime(datetime) {
     const selectedDate = new Date(datetime);
     const today = new Date();
@@ -402,18 +363,6 @@ function getDailyRecord(date) {
     return records.find(record => record.date === dateStr);
 }
 
-// 處理月份切換
-document.getElementById('prev-month').addEventListener('click', () => {
-    currentMonthDate.setMonth(currentMonthDate.getMonth() - 1);
-    renderCalendar(currentMonthDate);
-});
-
-document.getElementById('next-month').addEventListener('click', () => {
-    currentMonthDate.setMonth(currentMonthDate.getMonth() + 1);
-    renderCalendar(currentMonthDate);
-});
-
-
 /* ===== 初始化 ===== */
 document.addEventListener("DOMContentLoaded", () => {
     // 頁面切換事件
@@ -445,6 +394,56 @@ document.addEventListener("DOMContentLoaded", () => {
     // 打卡按鈕
     document.getElementById("punch-in-btn").addEventListener("click", () => doPunch("in"));
     document.getElementById("punch-out-btn").addEventListener("click", () => doPunch("out"));
+
+    // 月份切換按鈕事件
+    document.getElementById('prev-month').addEventListener('click', () => {
+        currentMonthDate.setMonth(currentMonthDate.getMonth() - 1);
+        renderCalendar(currentMonthDate);
+    });
+
+    document.getElementById('next-month').addEventListener('click', () => {
+        currentMonthDate.setMonth(currentMonthDate.getMonth() + 1);
+        renderCalendar(currentMonthDate);
+    });
+
+    // 補打卡按鈕事件
+    document.getElementById('abnormal-records-list').addEventListener('click', (e) => {
+        if (e.target.tagName === 'BUTTON' && e.target.textContent === '補打卡') {
+            const date = e.target.dataset.date;
+            const type = e.target.dataset.type;
+            const adjustmentFormContainer = document.getElementById("adjustment-form-container");
+            adjustmentFormContainer.innerHTML = `
+                <div class="card p-4 space-y-4">
+                    <h3 class="font-semibold text-gray-800">補打卡申請 - ${t(type === 'in' ? '上班' : '下班')}</h3>
+                    <input type="datetime-local" id="adjustment-datetime" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <div class="flex justify-end space-x-2">
+                        <button id="cancel-adjustment" class="btn-secondary">取消</button>
+                        <button id="submit-adjustment" class="btn-primary" data-type="${type}">送出</button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('cancel-adjustment').addEventListener('click', () => {
+                adjustmentFormContainer.innerHTML = '';
+            });
+            document.getElementById('submit-adjustment').addEventListener('click', () => {
+                const datetimeInput = document.getElementById('adjustment-datetime');
+                const datetime = datetimeInput.value;
+                if (!datetime) {
+                    showNotification("請選擇補打卡日期時間", "error");
+                    return;
+                }
+                if (!validateAdjustTime(datetime)) return;
+                callApiAdjustPunch(type, datetime, (res) => {
+                    const msg = t(res.code || "UNKNOWN_ERROR", res.params || {});
+                    showNotification(msg, res.ok ? "success" : "error");
+                    if (res.ok) {
+                        adjustmentFormContainer.innerHTML = '';
+                        checkAbnormal();
+                    }
+                });
+            });
+        }
+    });
 
     // 載入語系並檢查登入狀態
     loadTranslations(currentLang || "zh-TW").then(ensureLogin);
