@@ -263,8 +263,8 @@ function renderDailyRecords(dateKey) {
             recordsLoading.style.display = 'none';
             if (res.ok) {
                 // 將資料存入快取
-                monthDataCache[month] = res.records;
-                renderRecords(res.records);
+                monthDataCache[month] = res.results;
+                renderRecords(res.results);
             } else {
                 console.error("Failed to fetch attendance records:", res.msg);
                 showNotification(t("ERROR_FETCH_RECORDS"), "error");
@@ -404,7 +404,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     function doPunch(type) {
         
-        const punchButtonId = type === 'in' ? 'punch-in-btn' : 'punch-out-btn';
+        const punchButtonId = type === '上班' ? 'punch-in-btn' : 'punch-out-btn';
         punchButtonState(punchButtonId, 'processing');
         
         if (!navigator.geolocation) {
@@ -505,11 +505,33 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 月曆按鈕事件
     document.getElementById('prev-month').addEventListener('click', () => {
         currentMonthDate.setMonth(currentMonthDate.getMonth() - 1);
+        callApi(`getAttendanceDetails&month=${currentMonthDate}&userId=${userId}`, (res) => {
+            recordsLoading.style.display = 'none';
+            if (res.ok) {
+                // 將資料存入快取
+                monthDataCache[currentMonthDate] = res.results;
+                renderRecords(res.results);
+            } else {
+                console.error("Failed to fetch attendance records:", res.msg);
+                showNotification(t("ERROR_FETCH_RECORDS"), "error");
+            }
+        });
         renderCalendar(currentMonthDate);
     });
     
     document.getElementById('next-month').addEventListener('click', () => {
         currentMonthDate.setMonth(currentMonthDate.getMonth() + 1);
+        callApi(`getAttendanceDetails&month=${currentMonthDate}&userId=${userId}`, (res) => {
+            recordsLoading.style.display = 'none';
+            if (res.ok) {
+                // 將資料存入快取
+                monthDataCache[currentMonthDate] = res.results;
+                renderRecords(res.results);
+            } else {
+                console.error("Failed to fetch attendance records:", res.msg);
+                showNotification(t("ERROR_FETCH_RECORDS"), "error");
+            }
+        });
         renderCalendar(currentMonthDate);
     });
     
