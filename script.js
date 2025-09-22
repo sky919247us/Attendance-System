@@ -506,8 +506,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 月曆按鈕事件
     document.getElementById('prev-month').addEventListener('click', () => {
         currentMonthDate.setMonth(currentMonthDate.getMonth() - 1);
-        callApi(`getAttendanceDetails&month=${currentMonthDate}&userId=${userId}`, (res) => {
-            recordsLoading.style.display = 'none';
+        
+        const month = currentMonthDate.getFullYear() + "-" + String(currentMonthDate.getMonth() + 1).padStart(2, "0");
+        callApi(`getAttendanceDetails&month=${month}&userId=${userId}`, (res) => {
             if (res.ok) {
                 // 將資料存入快取
                 monthDataCache[currentMonthDate] = res.records;
@@ -522,8 +523,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     document.getElementById('next-month').addEventListener('click', () => {
         currentMonthDate.setMonth(currentMonthDate.getMonth() + 1);
-        callApi(`getAttendanceDetails&month=${currentMonthDate}&userId=${userId}`, (res) => {
-            recordsLoading.style.display = 'none';
+        const month = currentMonthDate.getFullYear() + "-" + String(currentMonthDate.getMonth() + 1).padStart(2, "0");
+        callApi(`getAttendanceDetails&month=${month}&userId=${userId}`, (res) => {
             if (res.ok) {
                 // 將資料存入快取
                 monthDataCache[currentMonthDate] = res.records;
