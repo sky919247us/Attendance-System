@@ -207,7 +207,7 @@ function renderCalendar(date) {
     const monthkey = currentMonthDate.getFullYear() + "-" + String(currentMonthDate.getMonth() + 1).padStart(2, "0");
     
     // 清空日曆，顯示載入狀態
-    calendarGrid.innerHTML = '<div class="text-center text-gray-500 py-4">正在載入打卡紀錄...</div>';
+    calendarGrid.innerHTML = '<div id="calendar-loading" class="text-center text-gray-500 py-4" style="display: none;">正在載入日曆資料...</div>';
     
     callApi(`getAttendanceDetails&month=${monthkey}&userId=${userId}`, (res) => {
         if (res.ok) {
