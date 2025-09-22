@@ -275,15 +275,15 @@ function renderDailyRecords(dateKey) {
     function renderRecords(records) {
         // 從該月份的所有紀錄中，過濾出所選日期的紀錄
         console.log(records);
+        
         const dailyRecords = records.filter(record =>{
-            console.log(dailyRecords.length);
             console.log(record);
             console.log(record.date);
             console.log(dateKey);
             record.date === dateKey
             
         });
-        
+        console.log(dailyRecords.length);
         if (dailyRecords.length > 0) {
             dailyRecordsEmpty.style.display = 'none';
             dailyRecords.forEach(record => {
