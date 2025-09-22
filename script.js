@@ -291,9 +291,9 @@ function renderDailyRecords(dateKey) {
                 const li = document.createElement('li');
                 li.className = 'p-3 bg-gray-50 rounded-lg';
                 li.innerHTML = `
-                    <p class="font-medium text-gray-800">${record.time} - ${record.type}</p>
-                    <p class="text-sm text-gray-500">${record.location}</p>
-                    <p class="text-sm text-gray-500">備註：${record.notes}</p>
+                    <p class="font-medium text-gray-800">${records.time} - ${records.type}</p>
+                    <p class="text-sm text-gray-500">${records.location}</p>
+                    <p class="text-sm text-gray-500">備註：${reason}</p>
                 `;
                 dailyRecordsList.appendChild(li);
             });
