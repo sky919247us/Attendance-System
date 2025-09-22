@@ -213,7 +213,7 @@ function renderCalendar(date) {
         // 如果沒有，才發送 API 請求
         // 清空日曆，顯示載入狀態，並確保置中
         calendarGrid.innerHTML = '<div class="col-span-full text-center text-gray-500 py-4">正在載入...</div>';
-    
+        
         callApi(`getAttendanceDetails&month=${monthkey}&userId=${userId}`, (res) => {
             if (res.ok) {
                 // 將資料存入快取
@@ -235,12 +235,14 @@ function renderCalendar(date) {
 
 // 新增一個獨立的渲染函式，以便從快取或 API 回應中調用
 function renderCalendarWithData(year, month, today, records, calendarGrid, monthTitle) {
+    // 確保日曆網格在每次渲染前被清空
+    calendarGrid.innerHTML = '';
     monthTitle.textContent = `${year} 年 ${month + 1} 月`;
     
     // 取得該月第一天是星期幾
     const firstDayOfMonth = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
-
+    
     // 填補月初的空白格子
     for (let i = 0; i < firstDayOfMonth; i++) {
         const emptyCell = document.createElement('div');
@@ -257,7 +259,7 @@ function renderCalendarWithData(year, month, today, records, calendarGrid, month
         let dateClass = 'normal-day';
         
         const todayRecords = records.filter(r => r.date === dateKey);
-
+        
         if (todayRecords.length > 0) {
             const reason = todayRecords[0].reason;
             switch (reason) {
@@ -282,7 +284,7 @@ function renderCalendarWithData(year, month, today, records, calendarGrid, month
                     break;
             }
         }
-    
+        
         const isToday = (year === today.getFullYear() && month === today.getMonth() && i === today.getDate());
         if (isToday) {
             dayCell.classList.add('today');
@@ -292,7 +294,7 @@ function renderCalendarWithData(year, month, today, records, calendarGrid, month
         } else {
             dayCell.classList.add(dateClass);
         }
-    
+        
         dayCell.classList.add('day-cell');
         dayCell.dataset.date = dateKey;
         dayCell.dataset.records = JSON.stringify(todayRecords); // 儲存當天資料
@@ -352,7 +354,7 @@ function renderDailyRecords(dateKey) {
                   <p class="text-sm text-gray-500">${r.location}</p>
                   <p class="text-sm text-gray-500">備註：${r.note}</p>
                 `).join("");
-
+                
                 li.innerHTML = `
                   ${recordHtml}
                   <p class="text-sm text-gray-500">系統判斷：${records.reason}</p>
@@ -562,7 +564,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // 頁面切換事件
     tabDashboardBtn.addEventListener('click', () => switchTab('dashboard-view'));
-   
+    
     tabLocationBtn.addEventListener('click', () => switchTab('location-view'));
     tabMonthlyBtn.addEventListener('click', () => switchTab('monthly-view'));
     // 月曆按鈕事件
