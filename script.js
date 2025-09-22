@@ -201,8 +201,6 @@ function renderCalendar(date) {
     const month = date.getMonth();
     const today = new Date();
     
-    monthTitle.textContent = `${year} 年 ${month + 1} 月`;
-    
     // 生成 monthKey
     const monthkey = currentMonthDate.getFullYear() + "-" + String(currentMonthDate.getMonth() + 1).padStart(2, "0");
     
@@ -212,9 +210,10 @@ function renderCalendar(date) {
         const records = monthDataCache[monthkey];
         renderCalendarWithData(year, month, today, records, calendarGrid, monthTitle);
     } else {
-        // 清空日曆，顯示載入狀態
-        calendarGrid.innerHTML = '<div id="calendar-loading" class="text-center text-gray-500 py-4">正在載入日曆資料...</div>';
-        
+        // 如果沒有，才發送 API 請求
+        // 清空日曆，顯示載入狀態，並確保置中
+        calendarGrid.innerHTML = '<div class="col-span-full text-center text-gray-500 py-4">正在載入...</div>';
+    
         callApi(`getAttendanceDetails&month=${monthkey}&userId=${userId}`, (res) => {
             if (res.ok) {
                 // 將資料存入快取
@@ -225,68 +224,7 @@ function renderCalendar(date) {
                 
                 // 從快取取得本月資料
                 const records = monthDataCache[monthkey] || [];
-                
-                // 取得該月第一天是星期幾
-                const firstDayOfMonth = new Date(year, month, 1).getDay();
-                const daysInMonth = new Date(year, month + 1, 0).getDate();
-                
-                // 填補月初的空白格子
-                for (let i = 0; i < firstDayOfMonth; i++) {
-                    const emptyCell = document.createElement('div');
-                    emptyCell.className = 'day-cell';
-                    calendarGrid.appendChild(emptyCell);
-                }
-                
-                // 根據資料渲染每一天的顏色
-                for (let i = 1; i <= daysInMonth; i++) {
-                    const dayCell = document.createElement('div');
-                    const cellDate = new Date(year, month, i);
-                    dayCell.textContent = i;
-                    let dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
-                    let dateClass = 'normal-day';
-                    
-                    const todayRecords = records.filter(r => r.date === dateKey);
-                    
-                    if (todayRecords.length > 0) {
-                        const reason = todayRecords[0].reason;
-                        switch (reason) {
-                            case "未打上班卡":
-                            case "未打下班卡":
-                            case "重複上班打卡":
-                            case "重複下班打卡":
-                            case "打卡次數不完整":
-                            case "未打上班卡, 未打下班卡":
-                                dateClass = 'abnormal-day';
-                                break;
-                            case "補卡(審核中)":
-                                dateClass = 'pending-virtual';
-                                break;
-                            case "補卡通過":
-                                dateClass = 'approved-virtual';
-                                break;
-                            default:
-                                if (reason && reason !== "") {
-                                    dateClass = 'pending-adjustment'; // 假設所有有備註的都算 pending
-                                }
-                                break;
-                        }
-                    }
-                    
-                    const isToday = (year === today.getFullYear() && month === today.getMonth() && i === today.getDate());
-                    if (isToday) {
-                        dayCell.classList.add('today');
-                    } else if (cellDate > today) {
-                        dayCell.classList.add('future-day');
-                        dayCell.style.pointerEvents = 'none'; // 未來日期不可點擊
-                    } else {
-                        dayCell.classList.add(dateClass);
-                    }
-                    
-                    dayCell.classList.add('day-cell');
-                    dayCell.dataset.date = dateKey;
-                    dayCell.dataset.records = JSON.stringify(todayRecords); // 儲存當天資料
-                    calendarGrid.appendChild(dayCell);
-                }
+                renderCalendarWithData(year, month, today, records, calendarGrid, monthTitle);
             } else {
                 console.error("Failed to fetch attendance records:", res.msg);
                 showNotification(t("ERROR_FETCH_RECORDS"), "error");
@@ -294,6 +232,74 @@ function renderCalendar(date) {
         });
     }
 }
+
+// 新增一個獨立的渲染函式，以便從快取或 API 回應中調用
+function renderCalendarWithData(year, month, today, records, calendarGrid, monthTitle) {
+    monthTitle.textContent = `${year} 年 ${month + 1} 月`;
+    
+    // 取得該月第一天是星期幾
+    const firstDayOfMonth = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    // 填補月初的空白格子
+    for (let i = 0; i < firstDayOfMonth; i++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.className = 'day-cell';
+        calendarGrid.appendChild(emptyCell);
+    }
+    
+    // 根據資料渲染每一天的顏色
+    for (let i = 1; i <= daysInMonth; i++) {
+        const dayCell = document.createElement('div');
+        const cellDate = new Date(year, month, i);
+        dayCell.textContent = i;
+        let dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+        let dateClass = 'normal-day';
+        
+        const todayRecords = records.filter(r => r.date === dateKey);
+
+        if (todayRecords.length > 0) {
+            const reason = todayRecords[0].reason;
+            switch (reason) {
+                case "未打上班卡":
+                case "未打下班卡":
+                case "重複上班打卡":
+                case "重複下班打卡":
+                case "打卡次數不完整":
+                case "未打上班卡, 未打下班卡":
+                    dateClass = 'abnormal-day';
+                    break;
+                case "補卡(審核中)":
+                    dateClass = 'pending-virtual';
+                    break;
+                case "補卡通過":
+                    dateClass = 'approved-virtual';
+                    break;
+                default:
+                    if (reason && reason !== "") {
+                        dateClass = 'pending-adjustment'; // 假設所有有備註的都算 pending
+                    }
+                    break;
+            }
+        }
+    
+        const isToday = (year === today.getFullYear() && month === today.getMonth() && i === today.getDate());
+        if (isToday) {
+            dayCell.classList.add('today');
+        } else if (cellDate > today) {
+            dayCell.classList.add('future-day');
+            dayCell.style.pointerEvents = 'none'; // 未來日期不可點擊
+        } else {
+            dayCell.classList.add(dateClass);
+        }
+    
+        dayCell.classList.add('day-cell');
+        dayCell.dataset.date = dateKey;
+        dayCell.dataset.records = JSON.stringify(todayRecords); // 儲存當天資料
+        calendarGrid.appendChild(dayCell);
+    }
+}
+
 // 新增：渲染每日紀錄的函式 (修正非同步問題)
 function renderDailyRecords(dateKey) {
     const dailyRecordsCard = document.getElementById('daily-records-card');
