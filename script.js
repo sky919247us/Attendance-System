@@ -320,8 +320,6 @@ function renderDailyRecords(dateKey) {
             
             return record.date === dateKey
         });
-        console.log(dailyRecords.length);
-        console.log(dailyRecords);
         if (dailyRecords.length > 0) {
             dailyRecordsEmpty.style.display = 'none';
             dailyRecords.forEach(records => {
