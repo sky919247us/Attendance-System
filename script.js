@@ -227,8 +227,7 @@ function renderCalendar(date) {
     }
     
     // 從快取取得本月資料
-    console.log(`${year}-${month + 1}`);
-       const records = monthDataCache[`${year}-${month + 1}`] || [];
+       const records = monthDataCache[monthkey] || [];
 
        for (let i = 1; i <= daysInMonth; i++) {
            const dayCell = document.createElement('div');
@@ -242,7 +241,8 @@ function renderCalendar(date) {
            console.log(records);
            console.log(dateKey);
            const todayRecords = records.filter(r =>{
-               console.log(r.date);
+               console.log("records.length:", records.length);
+               console.log(r.date, dateKey);
                return r.date === dateKey});
            
            console.log(todayRecords.length);
