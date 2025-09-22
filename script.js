@@ -293,7 +293,7 @@ function renderDailyRecords(dateKey) {
                 li.innerHTML = `
                     <p class="font-medium text-gray-800">${records.time} - ${records.type}</p>
                     <p class="text-sm text-gray-500">${records.location}</p>
-                    <p class="text-sm text-gray-500">備註：${reason}</p>
+                    <p class="text-sm text-gray-500">備註：${records.reason}</p>
                 `;
                 dailyRecordsList.appendChild(li);
             });
@@ -512,7 +512,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (res.ok) {
                 // 將資料存入快取
                 monthDataCache[currentMonthDate] = res.records;
-                renderRecords(res.records);
             } else {
                 console.error("Failed to fetch attendance records:", res.msg);
                 showNotification(t("ERROR_FETCH_RECORDS"), "error");
@@ -528,7 +527,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (res.ok) {
                 // 將資料存入快取
                 monthDataCache[currentMonthDate] = res.records;
-                renderRecords(res.records);
             } else {
                 console.error("Failed to fetch attendance records:", res.msg);
                 showNotification(t("ERROR_FETCH_RECORDS"), "error");
