@@ -264,8 +264,8 @@ function renderDailyRecords(dateKey) {
             recordsLoading.style.display = 'none';
             if (res.ok) {
                 // 將資料存入快取
-                monthDataCache[month] = res.results;
-                renderRecords(res.results);
+                monthDataCache[month] = res.records;
+                renderRecords(res.records);
             } else {
                 console.error("Failed to fetch attendance records:", res.msg);
                 showNotification(t("ERROR_FETCH_RECORDS"), "error");
@@ -509,8 +509,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             recordsLoading.style.display = 'none';
             if (res.ok) {
                 // 將資料存入快取
-                monthDataCache[currentMonthDate] = res.results;
-                renderRecords(res.results);
+                monthDataCache[currentMonthDate] = res.records;
+                renderRecords(res.records);
             } else {
                 console.error("Failed to fetch attendance records:", res.msg);
                 showNotification(t("ERROR_FETCH_RECORDS"), "error");
@@ -525,8 +525,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             recordsLoading.style.display = 'none';
             if (res.ok) {
                 // 將資料存入快取
-                monthDataCache[currentMonthDate] = res.results;
-                renderRecords(res.results);
+                monthDataCache[currentMonthDate] = res.records;
+                renderRecords(res.records);
             } else {
                 console.error("Failed to fetch attendance records:", res.msg);
                 showNotification(t("ERROR_FETCH_RECORDS"), "error");
