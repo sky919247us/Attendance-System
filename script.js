@@ -243,14 +243,15 @@ function renderCalendar(date) {
                const reason = todayRecords[0].reason;
                switch (reason) {
                    case "未打上班卡":
+                       dateClass = 'abnormal-day';
                    case "未打下班卡":
-                       dateClass = 'missing-day';
+                       dateClass = 'abnormal-day';
                        break;
                    case "有補卡(審核中)":
-                       dateClass = 'pending-day';
+                       dateClass = 'pending-virtual';
                        break;
                    case "補卡通過":
-                       dateClass = 'approved-day';
+                       dateClass = 'approved-virtual';
                        break;
                }
            }
