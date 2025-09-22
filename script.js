@@ -207,6 +207,17 @@ function renderCalendar(date) {
     const firstDayOfMonth = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     
+    const monthkey = currentMonthDate.getFullYear() + "-" + String(currentMonthDate.getMonth() + 1).padStart(2, "0");
+    callApi(`getAttendanceDetails&month=${monthkey}&userId=${userId}`, (res) => {
+        if (res.ok) {
+            // 將資料存入快取
+            monthDataCache[currentMonthDate] = res.records;
+        } else {
+            console.error("Failed to fetch attendance records:", res.msg);
+            showNotification(t("ERROR_FETCH_RECORDS"), "error");
+        }
+    });
+    
     for (let i = 0; i < firstDayOfMonth; i++) {
         const emptyCell = document.createElement('div');
         emptyCell.className = 'day-cell';
@@ -220,6 +231,26 @@ function renderCalendar(date) {
         
         let dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
         let dateClass = 'normal-day';
+        
+        // 直接用快取資料過濾當天紀錄
+        const todayRecords = records.filter(r => r.date === dateKey);
+
+        if (todayRecords.length > 0) {
+            // 依照 reason 給 class，取第一筆 reason 或自定義邏輯
+            const reason = todayRecords[0].reason;
+            switch (reason) {
+                case "未打上班卡":
+                case "未打下班卡":
+                    dateClass = 'missing-day';
+                    break;
+                case "有補卡(審核中)":
+                    dateClass = 'pending-day';
+                    break;
+                case "補卡通過":
+                    dateClass = 'approved-day';
+                    break;
+            }
+        }
         
         const isToday = (year === today.getFullYear() && month === today.getMonth() && i === today.getDate());
         if (isToday) {
@@ -505,38 +536,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // 頁面切換事件
     tabDashboardBtn.addEventListener('click', () => switchTab('dashboard-view'));
-    tabMonthlyBtn.addEventListener('click', () => switchTab('monthly-view'));
+   
     tabLocationBtn.addEventListener('click', () => switchTab('location-view'));
-    
+    tabMonthlyBtn.addEventListener('click', () => switchTab('monthly-view'));
     // 月曆按鈕事件
     document.getElementById('prev-month').addEventListener('click', () => {
         currentMonthDate.setMonth(currentMonthDate.getMonth() - 1);
-        
-        const month = currentMonthDate.getFullYear() + "-" + String(currentMonthDate.getMonth() + 1).padStart(2, "0");
-        callApi(`getAttendanceDetails&month=${month}&userId=${userId}`, (res) => {
-            if (res.ok) {
-                // 將資料存入快取
-                monthDataCache[currentMonthDate] = res.records;
-            } else {
-                console.error("Failed to fetch attendance records:", res.msg);
-                showNotification(t("ERROR_FETCH_RECORDS"), "error");
-            }
-        });
         renderCalendar(currentMonthDate);
     });
     
     document.getElementById('next-month').addEventListener('click', () => {
         currentMonthDate.setMonth(currentMonthDate.getMonth() + 1);
-        const month = currentMonthDate.getFullYear() + "-" + String(currentMonthDate.getMonth() + 1).padStart(2, "0");
-        callApi(`getAttendanceDetails&month=${month}&userId=${userId}`, (res) => {
-            if (res.ok) {
-                // 將資料存入快取
-                monthDataCache[currentMonthDate] = res.records;
-            } else {
-                console.error("Failed to fetch attendance records:", res.msg);
-                showNotification(t("ERROR_FETCH_RECORDS"), "error");
-            }
-        });
         renderCalendar(currentMonthDate);
     });
     
