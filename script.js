@@ -274,9 +274,9 @@ function renderDailyRecords(dateKey) {
 
     function renderRecords(records) {
         // 從該月份的所有紀錄中，過濾出所選日期的紀錄
-        const dailyRecords = records.filter(record => record.date === dateKey);
+        const dailyRecords = records.filter(records => records.date === dateKey);
         console.log(dailyRecords.length);
-        console.log(record.date);
+        console.log(records.date);
         console.log(dateKey);
         if (dailyRecords.length > 0) {
             dailyRecordsEmpty.style.display = 'none';
