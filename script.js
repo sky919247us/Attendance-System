@@ -244,6 +244,7 @@ function renderCalendar(date) {
                switch (reason) {
                    case "未打上班卡":
                        dateClass = 'abnormal-day';
+                       break;
                    case "未打下班卡":
                        dateClass = 'abnormal-day';
                        break;
