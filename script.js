@@ -6,6 +6,7 @@ let currentMonthDate = new Date();
 let translations = {};
 let monthDataCache = {}; // 新增：用於快取月份打卡資料
 let isApiCalled = false; // 新增：用於追蹤 API 呼叫狀態，避免重複呼叫
+let userId = localStorage.getItem("sessionUserId");
 
 
 // 載入語系檔
@@ -281,7 +282,6 @@ function renderDailyRecords(dateKey) {
             console.log(record.date);
             console.log(dateKey);
             record.date === dateKey
-            
         });
         console.log(dailyRecords.length);
         if (dailyRecords.length > 0) {
