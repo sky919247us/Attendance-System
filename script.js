@@ -281,12 +281,13 @@ function renderDailyRecords(dateKey) {
             console.log(record);
             console.log(record.date);
             console.log(dateKey);
-            record.date === dateKey
+            record.date == dateKey
         });
         console.log(dailyRecords.length);
+        console.log(dailyRecords);
         if (dailyRecords.length > 0) {
             dailyRecordsEmpty.style.display = 'none';
-            dailyRecords.forEach(record => {
+            dailyRecords.forEach(records => {
                 const li = document.createElement('li');
                 li.className = 'p-3 bg-gray-50 rounded-lg';
                 li.innerHTML = `
