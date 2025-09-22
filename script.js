@@ -205,8 +205,6 @@ function renderCalendar(date) {
     
     // 生成 monthKey
     const monthkey = currentMonthDate.getFullYear() + "-" + String(currentMonthDate.getMonth() + 1).padStart(2, "0");
-    // 生成 monthKey
-    const monthkey = currentMonthDate.getFullYear() + "-" + String(currentMonthDate.getMonth() + 1).padStart(2, "0");
     
     // 檢查快取中是否已有該月份資料
     if (monthDataCache[monthkey]) {
