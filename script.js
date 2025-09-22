@@ -224,33 +224,36 @@ function renderCalendar(date) {
         calendarGrid.appendChild(emptyCell);
     }
     
-    for (let i = 1; i <= daysInMonth; i++) {
-        const dayCell = document.createElement('div');
-        const cellDate = new Date(year, month, i);
-        dayCell.textContent = i;
-        
-        let dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
-        let dateClass = 'normal-day';
-        
-        // 直接用快取資料過濾當天紀錄
-        const todayRecords = records.filter(r => r.date === dateKey);
+    // 從快取取得本月資料
+       const records = monthDataCache[`${year}-${month + 1}`] || [];
 
-        if (todayRecords.length > 0) {
-            // 依照 reason 給 class，取第一筆 reason 或自定義邏輯
-            const reason = todayRecords[0].reason;
-            switch (reason) {
-                case "未打上班卡":
-                case "未打下班卡":
-                    dateClass = 'missing-day';
-                    break;
-                case "有補卡(審核中)":
-                    dateClass = 'pending-day';
-                    break;
-                case "補卡通過":
-                    dateClass = 'approved-day';
-                    break;
-            }
-        }
+       for (let i = 1; i <= daysInMonth; i++) {
+           const dayCell = document.createElement('div');
+           const cellDate = new Date(year, month, i);
+           dayCell.textContent = i;
+
+           let dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+           let dateClass = 'normal-day';
+
+           // 直接用快取資料過濾當天紀錄
+           const todayRecords = records.filter(r => r.date === dateKey);
+
+           if (todayRecords.length > 0) {
+               // 依照 reason 給 class，取第一筆 reason 或自定義邏輯
+               const reason = todayRecords[0].reason;
+               switch (reason) {
+                   case "未打上班卡":
+                   case "未打下班卡":
+                       dateClass = 'missing-day';
+                       break;
+                   case "有補卡(審核中)":
+                       dateClass = 'pending-day';
+                       break;
+                   case "補卡通過":
+                       dateClass = 'approved-day';
+                       break;
+               }
+           }
         
         const isToday = (year === today.getFullYear() && month === today.getMonth() && i === today.getDate());
         if (isToday) {
