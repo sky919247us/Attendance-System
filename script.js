@@ -281,7 +281,7 @@ function renderDailyRecords(dateKey) {
             console.log(record);
             console.log(record.date);
             console.log(dateKey);
-            record.date == dateKey
+            return record.date === dateKey
         });
         console.log(dailyRecords.length);
         console.log(dailyRecords);
