@@ -114,6 +114,25 @@
 
                  <!-- Admin View -->
                 <section id="admin-view" class="space-y-6" style="display: none;">
+                    <div class="card p-6 mt-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-2">新增打卡地點</h2>
+                        <p class="text-gray-500 mb-4">輸入地點名稱，並使用您的當前位置作為經緯度。</p>
+                        <div class="space-y-4">
+                            <div>
+                                <label for="location-name" class="block text-sm font-medium text-gray-700">地點名稱</label>
+                                <input type="text" id="location-name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">經緯度 (Latitude / Longitude)</label>
+                                <div class="mt-1 flex space-x-2">
+                                    <input type="text" id="location-lat" placeholder="緯度" readonly class="block w-1/2 rounded-md border-gray-300 bg-gray-100 shadow-sm sm:text-sm">
+                                    <input type="text" id="location-lng" placeholder="經度" readonly class="block w-1/2 rounded-md border-gray-300 bg-gray-100 shadow-sm sm:text-sm">
+                                </div>
+                            </div>
+                            <button id="get-location-btn" class="w-full py-2 px-4 rounded-lg font-bold btn-secondary">取得當前位置</button>
+                            <button id="add-location-btn" class="w-full py-2 px-4 rounded-lg font-bold btn-primary" disabled>新增地點</button>
+                        </div>
+                    </div>
                     <div class="card p-6">
                         <h2 class="text-xl font-bold text-gray-800 mb-1">待審核請求</h2>
                         <p class="text-gray-500 mb-4">請處理員工提出的補打卡或虛擬卡請求。</p>

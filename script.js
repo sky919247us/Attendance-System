@@ -381,7 +381,61 @@ document.addEventListener('DOMContentLoaded', async () => {
     const abnormalList = document.getElementById('abnormal-list');
     const adjustmentFormContainer = document.getElementById('adjustment-form-container');
     const calendarGrid = document.getElementById('calendar-grid');
-    
+    // 取得當前位置按鈕事件
+    const getLocationBtn = document.getElementById('get-location-btn');
+    const locationLatInput = document.getElementById('location-lat');
+    const locationLngInput = document.getElementById('location-lng');
+    const addLocationBtn = document.getElementById('add-location-btn');
+
+    getLocationBtn.addEventListener('click', () => {
+        if (!navigator.geolocation) {
+            showNotification(t("ERROR_GEOLOCATION", { msg: "您的瀏覽器不支援地理位置功能。" }), "error");
+            return;
+        }
+        
+        getLocationBtn.textContent = '取得中...';
+        getLocationBtn.disabled = true;
+        
+        navigator.geolocation.getCurrentPosition((pos) => {
+            locationLatInput.value = pos.coords.latitude;
+            locationLngInput.value = pos.coords.longitude;
+            getLocationBtn.textContent = '已取得';
+            addLocationBtn.disabled = false;
+            showNotification("位置已成功取得！", "success");
+        }, (err) => {
+            showNotification(t("ERROR_GEOLOCATION", { msg: err.message }), "error");
+            getLocationBtn.textContent = '取得當前位置';
+            getLocationBtn.disabled = false;
+        });
+    });
+    // 處理新增打卡地點
+    document.getElementById('add-location-btn').addEventListener('click', () => {
+        const name = document.getElementById('location-name').value;
+        const lat = document.getElementById('location-lat').value;
+        const lng = document.getElementById('location-lng').value;
+        
+        if (!name || !lat || !lng) {
+            showNotification("請填寫所有欄位並取得位置", "error");
+            return;
+        }
+        
+        // 呼叫 API 函式
+        callApi(`addLocation&name=${encodeURIComponent(name)}&lat=${encodeURIComponent(lat)}&lng=${encodeURIComponent(lng)}`, (res) => {
+            if (res.ok) {
+                showNotification("地點新增成功！", "success");
+                // 清空輸入欄位
+                document.getElementById('location-name').value = '';
+                document.getElementById('location-lat').value = '';
+                document.getElementById('location-lng').value = '';
+                // 重設按鈕狀態
+                getLocationBtn.textContent = '取得當前位置';
+                getLocationBtn.disabled = false;
+                addLocationBtn.disabled = true;
+            } else {
+                showNotification("新增地點失敗：" + res.msg, "error");
+            }
+        });
+    });
     // UI切換邏輯
     const switchTab = (tabId) => {
         const tabs = ['dashboard-view', 'monthly-view', 'location-view','admin-view'];
