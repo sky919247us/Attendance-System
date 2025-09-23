@@ -264,12 +264,13 @@ function renderCalendarWithData(year, month, today, records, calendarGrid, month
             const reason = todayRecords[0].reason;
             switch (reason) {
                 case "未打上班卡":
-                case "未打下班卡":
-                case "重複上班打卡":
-                case "重複下班打卡":
-                case "打卡次數不完整":
-                case "未打上班卡, 未打下班卡":
                     dateClass = 'abnormal-day';
+                    break;
+                case "未打下班卡":
+                    dateClass = 'abnormal-day';
+                    break;
+                case "休假":
+                    dateClass = 'day-off';
                     break;
                 case "補卡(審核中)":
                     dateClass = 'pending-virtual';
