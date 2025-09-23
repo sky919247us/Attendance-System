@@ -377,6 +377,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const tabDashboardBtn = document.getElementById('tab-dashboard-btn');
     const tabMonthlyBtn = document.getElementById('tab-monthly-btn');
     const tabLocationBtn = document.getElementById('tab-location-btn');
+    const tabAdminBtn = document.getElementById('tab-admin-btn');
     const abnormalList = document.getElementById('abnormal-list');
     const adjustmentFormContainer = document.getElementById('adjustment-form-container');
     const calendarGrid = document.getElementById('calendar-grid');
@@ -568,6 +569,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     tabLocationBtn.addEventListener('click', () => switchTab('location-view'));
     tabMonthlyBtn.addEventListener('click', () => switchTab('monthly-view'));
+    tabAdminBtn.addEventListener('click', () => switchTab('admin-view'));
     // 月曆按鈕事件
     document.getElementById('prev-month').addEventListener('click', () => {
         currentMonthDate.setMonth(currentMonthDate.getMonth() - 1);
