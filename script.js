@@ -383,8 +383,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // UI切換邏輯
     const switchTab = (tabId) => {
-        const tabs = ['dashboard-view', 'monthly-view', 'location-view'];
-        const btns = ['tab-dashboard-btn', 'tab-monthly-btn', 'tab-location-btn'];
+        const tabs = ['dashboard-view', 'monthly-view', 'location-view','admin-view'];
+        const btns = ['tab-dashboard-btn', 'tab-monthly-btn', 'tab-location-btn','tab-admin-btn'];
         
         tabs.forEach(id => document.getElementById(id).style.display = 'none');
         btns.forEach(id => document.getElementById(id).classList.replace('bg-indigo-600', 'bg-gray-200'));
