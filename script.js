@@ -269,7 +269,7 @@ function renderCalendarWithData(year, month, today, records, calendarGrid, month
                 case "未打下班卡":
                     dateClass = 'abnormal-day';
                     break;
-                case "休假":
+                case "正常":
                     dateClass = 'day-off';
                     break;
                 case "補卡(審核中)":
