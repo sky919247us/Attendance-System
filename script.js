@@ -71,62 +71,6 @@ async function callApifetch(action, loadingId = "loading") {
   }
 }
 
-/* ===== JSONP 呼叫 ===== */
-function callApi(action, cb, loadingId = "loading") {
-    const token = localStorage.getItem("sessionToken");
-    const url = `${API_CONFIG.apiUrl}?action=${action}&token=${token}&callback=handleResponse`;
-    const script = document.createElement("script");
-    
-    // 顯示指定 loading
-    const loadingEl = document.getElementById(loadingId);
-    if (loadingEl) loadingEl.style.display = "block";
-    
-    // 處理 JSONP 回應
-    window.handleResponse = (res) => {
-        if (loadingEl) loadingEl.style.display = "none";
-        cb(res);
-        if (script.parentNode) {
-            script.parentNode.removeChild(script);
-        }
-    };
-    
-    script.src = url;
-    script.onerror = () => showNotification(t("CONNECTION_FAILED"), "error");
-    document.body.appendChild(script);
-}
-
-/* ===== 交換一次性 token ===== */
-function exchangeToken(action, otoken, cb) {
-    const url = `${API_CONFIG.apiUrl}?action=${action}&otoken=${otoken}&callback=handleExchange`;
-    const script = document.createElement("script");
-    window.handleExchange = cb;
-    script.src = url;
-    script.onerror = () => showNotification(t("CONNECTION_FAILED"), "error");
-    document.body.appendChild(script);
-}
-
-/* ===== 補打卡 ===== */
-function callApiAdjustPunch(type, datetime, cb) {
-    const token = localStorage.getItem("sessionToken");
-    const dateObj = new Date(datetime);
-    const lat = 0;
-    const lng = 0;
-    
-    const url = `${API_CONFIG.apiUrl}?action=adjustPunch&token=${token}&type=${encodeURIComponent(type)}&lat=${lat}&lng=${lng}&datetime=${dateObj.toISOString()}&callback=handleAdjustResponse&note=${encodeURIComponent(navigator.userAgent)}`;
-    const script = document.createElement("script");
-    const loadingEl = document.getElementById("loadingMsg");
-    if (loadingEl) loadingEl.style.display = "block";
-    
-    window.handleAdjustResponse = (res) => {
-        if (loadingEl) loadingEl.style.display = "none";
-        cb(res);
-    };
-    
-    script.src = url;
-    script.onerror = () => showNotification(t("CONNECTION_FAILED"), "error");
-    document.body.appendChild(script);
-}
-
 /* ===== 共用訊息顯示 ===== */
 const showNotification = (message, type = 'success') => {
     const notification = document.getElementById('notification');
@@ -147,11 +91,12 @@ const showNotification = (message, type = 'success') => {
 };
 
 // 確保登入
-function ensureLogin() {
-    return new Promise((resolve) => {
+async function ensureLogin() {
+    return new Promise(async (resolve) => {
         if (localStorage.getItem("sessionToken")) {
             document.getElementById("status").textContent = t("CHECKING_LOGIN");
-            callApi("checkSession", (res) => {
+            try {
+                const res = await callApifetch("checkSession");
                 res.msg = t(res.code);
                 if (res.ok) {
                     document.getElementById("user-name").textContent = res.user.name;
@@ -176,7 +121,14 @@ function ensureLogin() {
                     document.getElementById('main-app').style.display = 'none';
                     resolve(false);
                 }
-            });
+            } catch (err) {
+                console.error(err);
+                document.getElementById('login-btn').style.display = 'block';
+                document.getElementById('user-header').style.display = 'none';
+                document.getElementById('main-app').style.display = 'none';
+                document.getElementById("status").textContent = t("PLEASE_RELOGIN");
+                resolve(false);
+            }
         } else {
             document.getElementById('login-btn').style.display = 'block';
             document.getElementById('user-header').style.display = 'none';
@@ -188,7 +140,7 @@ function ensureLogin() {
 }
 
 //檢查本月打卡異常
-function checkAbnormal() {
+async function checkAbnormal() {
     const now = new Date();
     const month = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0");
     const userId = localStorage.getItem("sessionUserId");
@@ -196,7 +148,8 @@ function checkAbnormal() {
     const recordsLoading = document.getElementById("records-loading");
     recordsLoading.style.display = 'block';
     
-    callApi(`getAbnormalRecords&month=${month}&userId=${userId}`, (res) => {
+    try {
+        const res = await callApifetch(`getAbnormalRecords&month=${month}&userId=${userId}`);
         recordsLoading.style.display = 'none';
         if (res.ok) {
             const abnormalRecordsSection = document.getElementById("abnormal-records-section");
@@ -228,11 +181,14 @@ function checkAbnormal() {
             console.error("Failed to fetch abnormal records:", res.msg);
             showNotification(t("ERROR_FETCH_RECORDS"), "error");
         }
-    });
+    } catch (err) {
+        console.error(err);
+        recordsLoading.style.display = 'none';
+    }
 }
 
 // 渲染日曆的函式
-function renderCalendar(date) {
+async function renderCalendar(date) {
     const monthTitle = document.getElementById('month-title');
     const calendarGrid = document.getElementById('calendar-grid');
     const year = date.getFullYear();
@@ -252,7 +208,8 @@ function renderCalendar(date) {
         // 清空日曆，顯示載入狀態，並確保置中
         calendarGrid.innerHTML = '<div class="col-span-full text-center text-gray-500 py-4">正在載入...</div>';
         
-        callApi(`getAttendanceDetails&month=${monthkey}&userId=${userId}`, (res) => {
+        try {
+            const res = await callApifetch(`getAttendanceDetails&month=${monthkey}&userId=${userId}`);
             if (res.ok) {
                 // 將資料存入快取
                 monthDataCache[monthkey] = res.records;
@@ -267,7 +224,9 @@ function renderCalendar(date) {
                 console.error("Failed to fetch attendance records:", res.msg);
                 showNotification(t("ERROR_FETCH_RECORDS"), "error");
             }
-        });
+        } catch (err) {
+            console.error(err);
+        }
     }
 }
 
@@ -342,7 +301,7 @@ function renderCalendarWithData(year, month, today, records, calendarGrid, month
 }
 
 // 新增：渲染每日紀錄的函式 (修正非同步問題)
-function renderDailyRecords(dateKey) {
+async function renderDailyRecords(dateKey) {
     const dailyRecordsCard = document.getElementById('daily-records-card');
     const dailyRecordsTitle = document.getElementById('daily-records-title');
     const dailyRecordsList = document.getElementById('daily-records-list');
@@ -364,7 +323,8 @@ function renderDailyRecords(dateKey) {
         recordsLoading.style.display = 'none';
     } else {
         // 否則從 API 取得資料
-        callApi(`getAttendanceDetails&month=${month}&userId=${userId}`, (res) => {
+        try {
+            const res = await callApifetch(`getAttendanceDetails&month=${month}&userId=${userId}`);
             recordsLoading.style.display = 'none';
             if (res.ok) {
                 // 將資料存入快取
@@ -374,7 +334,9 @@ function renderDailyRecords(dateKey) {
                 console.error("Failed to fetch attendance records:", res.msg);
                 showNotification(t("ERROR_FETCH_RECORDS"), "error");
             }
-        });
+        } catch (err) {
+            console.error(err);
+        }
     }
     
     function renderRecords(records) {
@@ -389,14 +351,14 @@ function renderDailyRecords(dateKey) {
                 const li = document.createElement('li');
                 li.className = 'p-3 bg-gray-50 rounded-lg';
                 const recordHtml = records.record.map(r => `
-                  <p class="font-medium text-gray-800">${r.time} - ${r.type}</p>
-                  <p class="text-sm text-gray-500">${r.location}</p>
-                  <p class="text-sm text-gray-500">備註：${r.note}</p>
+                    <p class="font-medium text-gray-800">${r.time} - ${r.type}</p>
+                    <p class="text-sm text-gray-500">${r.location}</p>
+                    <p class="text-sm text-gray-500">備註：${r.note}</p>
                 `).join("");
                 
                 li.innerHTML = `
-                  ${recordHtml}
-                  <p class="text-sm text-gray-500">系統判斷：${records.reason}</p>
+                    ${recordHtml}
+                    <p class="text-sm text-gray-500">系統判斷：${records.reason}</p>
                 `;
                 dailyRecordsList.appendChild(li);
             });
@@ -470,7 +432,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     });
     // 處理新增打卡地點
-    document.getElementById('add-location-btn').addEventListener('click', () => {
+    document.getElementById('add-location-btn').addEventListener('click', async () => {
         const name = document.getElementById('location-name').value;
         const lat = document.getElementById('location-lat').value;
         const lng = document.getElementById('location-lng').value;
@@ -480,8 +442,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
         
-        // 呼叫 API 函式
-        callApi(`addLocation&name=${encodeURIComponent(name)}&lat=${encodeURIComponent(lat)}&lng=${encodeURIComponent(lng)}`, (res) => {
+        try {
+            const res = await callApifetch(`addLocation&name=${encodeURIComponent(name)}&lat=${encodeURIComponent(lat)}&lng=${encodeURIComponent(lng)}`);
             if (res.ok) {
                 showNotification("地點新增成功！", "success");
                 // 清空輸入欄位
@@ -495,7 +457,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             } else {
                 showNotification("新增地點失敗：" + res.msg, "error");
             }
-        });
+        } catch (err) {
+            console.error(err);
+        }
     });
     // UI切換邏輯
     const switchTab = (tabId) => {
@@ -540,7 +504,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const otoken = params.get('code');
     
     if (otoken) {
-        exchangeToken("getProfile", otoken, (res) => {
+        try {
+            const res = await callApifetch(`getProfile&otoken=${otoken}`);
             if (res.ok && res.sToken) {
                 localStorage.setItem("sessionToken", res.sToken);
                 history.replaceState({}, '', window.location.pathname);
@@ -549,16 +514,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                 showNotification(t("ERROR_LOGIN_FAILED", { msg: res.msg || t("UNKNOWN_ERROR") }), "error");
                 loginBtn.style.display = 'block';
             }
-        });
+        } catch (err) {
+            console.error(err);
+            loginBtn.style.display = 'block';
+        }
     } else {
         ensureLogin();
     }
     
     // 綁定按鈕事件
-    loginBtn.onclick = () => {
-        callApi("getLoginUrl", (res) => {
-            if (res.url) window.location.href = res.url;
-        });
+    loginBtn.onclick = async () => {
+        const res = await callApifetch("getLoginUrl");
+        if (res.url) window.location.href = res.url;
     };
     
     logoutBtn.onclick = () => {
@@ -584,123 +551,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
     
-    function doPunch(type) {
+    async function doPunch(type) {
         
         const punchButtonId = type === '上班' ? 'punch-in-btn' : 'punch-out-btn';
         punchButtonState(punchButtonId, 'processing');
         
-        if (!navigator.geolocation) {
-            showNotification(t("ERROR_GEOLOCATION", { msg: "您的瀏覽器不支援地理位置功能。" }), "error");
-            punchButtonState(punchButtonId, 'complete');
-            return;
-        }
-        
-        navigator.geolocation.getCurrentPosition((pos) => {
-            const lat = pos.coords.latitude;
-            const lng = pos.coords.longitude;
-            const action = `punch&type=${encodeURIComponent(type)}&lat=${lat}&lng=${lng}&note=${encodeURIComponent(navigator.userAgent)}`;
-            callApi(action, (res) => {
-                const msg = t(res.code || "UNKNOWN_ERROR", res.params || {});
-                showNotification(msg, res.ok ? "success" : "error");
-                punchButtonState(punchButtonId, 'complete');
-            });
-        }, (err) => {
-            showNotification(t("ERROR_GEOLOCATION", { msg: err.message }), "error");
-        });
-    }
-    
-    punchInBtn.addEventListener('click', () => doPunch("上班"));
-    punchOutBtn.addEventListener('click', () => doPunch("下班"));
-    
-    // 處理補打卡表單
-    abnormalList.addEventListener('click', (e) => {
-        if (e.target.classList.contains('adjust-btn')) {
-            const date = e.target.dataset.date;
-            const reason = e.target.dataset.reason;
-            const formHtml = `
-                <div class="p-4 border-t border-gray-200 fade-in">
-                    <p class="font-semibold mb-2">補打卡：<span class="text-indigo-600">${date}</span></p>
-                    <div class="form-group mb-3">
-                        <label for="adjustDateTime" class="block text-sm font-medium text-gray-700 mb-1">選擇日期與時間：</label>
-                        <input id="adjustDateTime" type="datetime-local" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        <button data-type="in" class="submit-adjust-btn w-full py-2 px-4 rounded-lg font-bold btn-secondary">補上班卡</button>
-                        <button data-type="out" class="submit-adjust-btn w-full py-2 px-4 rounded-lg font-bold btn-secondary">補下班卡</button>
-                    </div>
-                </div>
-            `;
-            adjustmentFormContainer.innerHTML = formHtml;
-            
-            const adjustDateTimeInput = document.getElementById("adjustDateTime");
-            let defaultTime = "09:00"; // 預設為上班時間
-            if (reason.includes("下班")) {
-                defaultTime = "18:00";
-            }
-            adjustDateTimeInput.value = `${date}T${defaultTime}`;
-        }
-    });
-    
-    function validateAdjustTime(value) {
-        const selected = new Date(value);
-        const now = new Date();
-        const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
-        const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-        
-        if (selected < monthStart) {
-            showNotification(t("ERR_BEFORE_MONTH_START"), "error");
-            return false;
-        }
-        if (selected > yesterday) {
-            showNotification(t("ERR_AFTER_YESTERDAY"), "error");
-            return false;
-        }
-        return true;
-    }
-    
-    adjustmentFormContainer.addEventListener('click', (e) => {
-        if (e.target.classList.contains('submit-adjust-btn')) {
-            const datetime = document.getElementById("adjustDateTime").value;
-            const type = e.target.dataset.type;
-            if (!datetime) {
-                showNotification("請選擇補打卡日期時間", "error");
-                return;
-            }
-            if (!validateAdjustTime(datetime)) return;
-            
-            callApiAdjustPunch(type === 'in' ? "上班" : "下班", datetime, (res) => {
-                const msg = t(res.code || "UNKNOWN_ERROR", res.params || {});
-                showNotification(msg, res.ok ? "success" : "error");
-                if (res.ok) {
-                    adjustmentFormContainer.innerHTML = '';
-                    checkAbnormal(); // 補打卡成功後，重新檢查異常紀錄
-                }
-            });
-        }
-    });
-    
-    // 頁面切換事件
-    tabDashboardBtn.addEventListener('click', () => switchTab('dashboard-view'));
-    
-    tabLocationBtn.addEventListener('click', () => switchTab('location-view'));
-    tabMonthlyBtn.addEventListener('click', () => switchTab('monthly-view'));
-    tabAdminBtn.addEventListener('click', () => switchTab('admin-view'));
-    // 月曆按鈕事件
-    document.getElementById('prev-month').addEventListener('click', () => {
-        currentMonthDate.setMonth(currentMonthDate.getMonth() - 1);
-        renderCalendar(currentMonthDate);
-    });
-    
-    document.getElementById('next-month').addEventListener('click', () => {
-        currentMonthDate.setMonth(currentMonthDate.getMonth() + 1);
-        renderCalendar(currentMonthDate);
-    });
-    
-    // 點擊日曆日期的事件監聽器
-    calendarGrid.addEventListener('click', (e) => {
-        if (e.target.classList.contains('day-cell') && e.target.dataset.date) {
-            const date = e.target.dataset.date;
-            renderDailyRecords(date);
-        }
-    });
-});
+        if (!navigator.geolocation
