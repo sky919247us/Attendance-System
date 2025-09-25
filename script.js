@@ -33,6 +33,44 @@ function t(code, params = {}) {
     return text;
 }
 
+/**
+ * 透過 fetch API 呼叫後端 API。
+ * @param {string} action - API 的動作名稱。
+ * @param {string} [loadingId="loading"] - 顯示 loading 狀態的 DOM 元素 ID。
+ * @returns {Promise<object>} - 回傳一個包含 API 回應資料的 Promise。
+ */
+async function callApifetch(action, loadingId = "loading") {
+  const token = localStorage.getItem("sessionToken");
+  const url = `${API_CONFIG.apiUrl}?action=${action}&token=${token}`;
+
+  // 顯示指定的 loading 元素
+  const loadingEl = document.getElementById(loadingId);
+  if (loadingEl) loadingEl.style.display = "block";
+
+  try {
+    // 使用 fetch API 發送請求
+    const response = await fetch(url);
+
+    // 檢查 HTTP 狀態碼
+    if (!response.ok) {
+      throw new Error(`HTTP 錯誤: ${response.status}`);
+    }
+
+    // 解析 JSON 回應
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    // 處理網路或其他錯誤
+    showNotification(t("CONNECTION_FAILED"), "error");
+    console.error("API 呼叫失敗:", error);
+    // 拋出錯誤以便外部捕獲
+    throw error;
+  } finally {
+    // 不論成功或失敗，都隱藏 loading 元素
+    if (loadingEl) loadingEl.style.display = "none";
+  }
+}
+
 /* ===== JSONP 呼叫 ===== */
 function callApi(action, cb, loadingId = "loading") {
     const token = localStorage.getItem("sessionToken");
@@ -388,18 +426,26 @@ document.addEventListener('DOMContentLoaded', async () => {
     const addLocationBtn = document.getElementById('add-location-btn');
     
     // 處理 API 測試按鈕事件
-    document.getElementById('test-api-btn').addEventListener('click', () => {
+    document.getElementById('test-api-btn').addEventListener('click', async () => {
         // 這裡替換成您想要測試的 API action 名稱
         const testAction = "testEndpoint";
         
-        // 呼叫 API 函式
-        callApi(testAction, (res) => {
-            if (res.ok) {
-                showNotification("API 測試成功！回應：" + JSON.stringify(res.data), "success");
+        try {
+            // 使用 await 等待 API 呼叫完成並取得回應
+            const res = await callApifetch(testAction);
+            
+            // 檢查 API 回應中的 'ok' 屬性
+            if (res && res.ok) {
+                showNotification("API 測試成功！回應：" + JSON.stringify(res), "success");
             } else {
-                showNotification("API 測試失敗：" + res.msg, "error");
+                // 如果 res.ok 為 false，表示後端處理失敗
+                showNotification("API 測試失敗：" + (res ? res.msg : "無回應資料"), "error");
             }
-        });
+        } catch (error) {
+            // 捕捉任何在 callApifetch 函式中拋出的錯誤（例如網路連線問題）
+            console.error("API 呼叫發生錯誤:", error);
+            showNotification("API 呼叫失敗，請檢查網路連線或後端服務。", "error");
+        }
     });
     
     getLocationBtn.addEventListener('click', () => {
