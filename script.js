@@ -387,6 +387,100 @@ document.addEventListener('DOMContentLoaded', async () => {
     const locationLngInput = document.getElementById('location-lng');
     const addLocationBtn = document.getElementById('add-location-btn');
     
+    // 全域變數，用於儲存地圖實例
+    let mapInstance = null;
+    let currentCoords = null;
+    let marker = null;
+    let circle = null;
+
+    // 初始化地圖並取得使用者位置
+    function initLocationMap() {
+        const mapContainer = document.getElementById('map-container');
+        const statusEl = document.getElementById('location-status');
+        const coordsEl = document.getElementById('location-coords');
+        
+        // 如果地圖已經存在，則直接返回
+        if (mapInstance) {
+            mapInstance.invalidateSize();
+            return;
+        }
+
+        // 顯示載入狀態
+        mapContainer.innerHTML = '正在載入地圖...';
+        statusEl.textContent = '正在偵測位置...';
+        coordsEl.textContent = '未知';
+
+        // 建立地圖
+        mapInstance = L.map('map-container', {
+            center: [25.0330, 121.5654], // 預設中心點為台北市
+            zoom: 13
+        });
+
+        // 加入 OpenStreetMap 圖層
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(mapInstance);
+
+        // 取得使用者地理位置
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    currentCoords = [latitude, longitude];
+
+                    // 更新狀態顯示
+                    statusEl.textContent = '偵測成功';
+                    coordsEl.textContent = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+                    
+                    // 設定地圖視圖
+                    mapInstance.setView(currentCoords, 18);
+
+                    // 在地圖上放置標記
+                    if (marker) mapInstance.removeLayer(marker);
+                    marker = L.marker(currentCoords).addTo(mapInstance)
+                        .bindPopup("你現在在這裡")
+                        .openPopup();
+
+                    // 畫出可打卡範圍，假設範圍為 50 公尺
+                    // 你可以依據實際需求調整這個半徑值
+                    const punchInRadius = 50;
+                    if (circle) mapInstance.removeLayer(circle);
+                    circle = L.circle(currentCoords, {
+                        color: 'blue',
+                        fillColor: '#3076ff',
+                        fillOpacity: 0.2,
+                        radius: punchInRadius
+                    }).addTo(mapInstance).bindPopup(`可打卡範圍：${punchInRadius}公尺`);
+                },
+                (error) => {
+                    // 處理定位失敗
+                    statusEl.textContent = '偵測失敗';
+                    console.error("Geolocation failed:", error);
+                    
+                    let message;
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            message = "使用者拒絕了位置請求。";
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            message = "位置資訊無法取得。";
+                            break;
+                        case error.TIMEOUT:
+                            message = "位置請求超時。";
+                            break;
+                        case error.UNKNOWN_ERROR:
+                            message = "發生未知錯誤。";
+                            break;
+                    }
+                    showNotification(`定位失敗：${message}`, "error");
+                }
+            );
+        } else {
+            showNotification("您的瀏覽器不支援地理定位。", "error");
+            statusEl.textContent = '不支援定位';
+        }
+    }
+    
     // 處理 API 測試按鈕事件
     document.getElementById('test-api-btn').addEventListener('click', async () => {
         // 這裡替換成您想要測試的 API action 名稱
@@ -477,6 +571,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         // 如果切換到月份檢視，渲染日曆
         if (tabId === 'monthly-view') {
             renderCalendar(currentMonthDate);
+        }else if (tabId === 'location-view') {
+            initLocationMap(); // <-- 這裡改為呼叫新的地圖初始化函式
         }
     };
     
