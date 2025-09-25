@@ -60,6 +60,7 @@
 2. 在 Google 雲端硬碟中建立一個新的 Google 試算表，並在「擴充功能」中開啟 Apps Script
 3. 將程式碼貼上，並在「專案屬性」中設定你的 **LINE Channel ID** 和 **Channel Secret**
 4. 將專案發佈為一個網頁應用程式 (Web App)
+＊目前GAS尚未發布帶我整理好後會陸續發佈
 
 ### 2. LINE Developers 設定
 1. 登入 **LINE Developers** 後台，建立一個 LINE Login 頻道
