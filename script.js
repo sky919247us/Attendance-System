@@ -40,35 +40,35 @@ function t(code, params = {}) {
  * @returns {Promise<object>} - 回傳一個包含 API 回應資料的 Promise。
  */
 async function callApifetch(action, loadingId = "loading") {
-  const token = localStorage.getItem("sessionToken");
-  const url = `${API_CONFIG.apiUrl}?action=${action}&token=${token}`;
-
-  // 顯示指定的 loading 元素
-  const loadingEl = document.getElementById(loadingId);
-  if (loadingEl) loadingEl.style.display = "block";
-
-  try {
-    // 使用 fetch API 發送請求
-    const response = await fetch(url);
-
-    // 檢查 HTTP 狀態碼
-    if (!response.ok) {
-      throw new Error(`HTTP 錯誤: ${response.status}`);
+    const token = localStorage.getItem("sessionToken");
+    const url = `${API_CONFIG.apiUrl}?action=${action}&token=${token}`;
+    
+    // 顯示指定的 loading 元素
+    const loadingEl = document.getElementById(loadingId);
+    if (loadingEl) loadingEl.style.display = "block";
+    
+    try {
+        // 使用 fetch API 發送請求
+        const response = await fetch(url);
+        
+        // 檢查 HTTP 狀態碼
+        if (!response.ok) {
+            throw new Error(`HTTP 錯誤: ${response.status}`);
+        }
+        
+        // 解析 JSON 回應
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        // 處理網路或其他錯誤
+        showNotification(t("CONNECTION_FAILED"), "error");
+        console.error("API 呼叫失敗:", error);
+        // 拋出錯誤以便外部捕獲
+        throw error;
+    } finally {
+        // 不論成功或失敗，都隱藏 loading 元素
+        if (loadingEl) loadingEl.style.display = "none";
     }
-
-    // 解析 JSON 回應
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    // 處理網路或其他錯誤
-    showNotification(t("CONNECTION_FAILED"), "error");
-    console.error("API 呼叫失敗:", error);
-    // 拋出錯誤以便外部捕獲
-    throw error;
-  } finally {
-    // 不論成功或失敗，都隱藏 loading 元素
-    if (loadingEl) loadingEl.style.display = "none";
-  }
 }
 
 /* ===== 共用訊息顯示 ===== */
@@ -617,13 +617,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         const now = new Date();
         const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
         const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-        
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         if (selected < monthStart) {
             showNotification(t("ERR_BEFORE_MONTH_START"), "error");
             return false;
         }
-        if (selected > yesterday) {
-            showNotification(t("ERR_AFTER_YESTERDAY"), "error");
+        // 不允許選今天以後
+        if (selected > today) {
+            showNotification(t("ERR_AFTER_TODAY"), "error");
             return false;
         }
         return true;
