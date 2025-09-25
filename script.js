@@ -556,4 +556,130 @@ document.addEventListener('DOMContentLoaded', async () => {
         const punchButtonId = type === '上班' ? 'punch-in-btn' : 'punch-out-btn';
         punchButtonState(punchButtonId, 'processing');
         
-        if (!navigator.geolocation
+        if (!navigator.geolocation) {
+            showNotification(t("ERROR_GEOLOCATION", { msg: "您的瀏覽器不支援地理位置功能。" }), "error");
+            punchButtonState(punchButtonId, 'complete');
+            return;
+        }
+        
+        navigator.geolocation.getCurrentPosition(async (pos) => {
+            const lat = pos.coords.latitude;
+            const lng = pos.coords.longitude;
+            const action = `punch&type=${encodeURIComponent(type)}&lat=${lat}&lng=${lng}&note=${encodeURIComponent(navigator.userAgent)}`;
+            try {
+                const res = await callApifetch(action);
+                const msg = t(res.code || "UNKNOWN_ERROR", res.params || {});
+                showNotification(msg, res.ok ? "success" : "error");
+                punchButtonState(punchButtonId, 'complete');
+            } catch (err) {
+                console.error(err);
+                punchButtonState(punchButtonId, 'complete');
+            }
+        }, (err) => {
+            showNotification(t("ERROR_GEOLOCATION", { msg: err.message }), "error");
+        });
+    }
+    
+    punchInBtn.addEventListener('click', () => doPunch("上班"));
+    punchOutBtn.addEventListener('click', () => doPunch("下班"));
+    
+    // 處理補打卡表單
+    abnormalList.addEventListener('click', (e) => {
+        if (e.target.classList.contains('adjust-btn')) {
+            const date = e.target.dataset.date;
+            const reason = e.target.dataset.reason;
+            const formHtml = `
+                <div class="p-4 border-t border-gray-200 fade-in">
+                    <p class="font-semibold mb-2">補打卡：<span class="text-indigo-600">${date}</span></p>
+                    <div class="form-group mb-3">
+                        <label for="adjustDateTime" class="block text-sm font-medium text-gray-700 mb-1">選擇日期與時間：</label>
+                        <input id="adjustDateTime" type="datetime-local" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <button data-type="in" class="submit-adjust-btn w-full py-2 px-4 rounded-lg font-bold btn-secondary">補上班卡</button>
+                        <button data-type="out" class="submit-adjust-btn w-full py-2 px-4 rounded-lg font-bold btn-secondary">補下班卡</button>
+                    </div>
+                </div>
+            `;
+            adjustmentFormContainer.innerHTML = formHtml;
+            
+            const adjustDateTimeInput = document.getElementById("adjustDateTime");
+            let defaultTime = "09:00"; // 預設為上班時間
+            if (reason.includes("下班")) {
+                defaultTime = "18:00";
+            }
+            adjustDateTimeInput.value = `${date}T${defaultTime}`;
+        }
+    });
+    
+    function validateAdjustTime(value) {
+        const selected = new Date(value);
+        const now = new Date();
+        const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+        const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+        
+        if (selected < monthStart) {
+            showNotification(t("ERR_BEFORE_MONTH_START"), "error");
+            return false;
+        }
+        if (selected > yesterday) {
+            showNotification(t("ERR_AFTER_YESTERDAY"), "error");
+            return false;
+        }
+        return true;
+    }
+    
+    adjustmentFormContainer.addEventListener('click', async (e) => {
+        if (e.target.classList.contains('submit-adjust-btn')) {
+            const datetime = document.getElementById("adjustDateTime").value;
+            const type = e.target.dataset.type;
+            if (!datetime) {
+                showNotification("請選擇補打卡日期時間", "error");
+                return;
+            }
+            if (!validateAdjustTime(datetime)) return;
+            
+            const dateObj = new Date(datetime);
+            const lat = 0;
+            const lng = 0;
+            const action = `adjustPunch&type=${type === 'in' ? "上班" : "下班"}&lat=${lat}&lng=${lng}&datetime=${dateObj.toISOString()}&note=${encodeURIComponent(navigator.userAgent)}`;
+            
+            try {
+                const res = await callApifetch(action, "loadingMsg");
+                const msg = t(res.code || "UNKNOWN_ERROR", res.params || {});
+                showNotification(msg, res.ok ? "success" : "error");
+                if (res.ok) {
+                    adjustmentFormContainer.innerHTML = '';
+                    checkAbnormal(); // 補打卡成功後，重新檢查異常紀錄
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+    });
+    
+    // 頁面切換事件
+    tabDashboardBtn.addEventListener('click', () => switchTab('dashboard-view'));
+    
+    tabLocationBtn.addEventListener('click', () => switchTab('location-view'));
+    tabMonthlyBtn.addEventListener('click', () => switchTab('monthly-view'));
+    tabAdminBtn.addEventListener('click', () => switchTab('admin-view'));
+    // 月曆按鈕事件
+    document.getElementById('prev-month').addEventListener('click', () => {
+        currentMonthDate.setMonth(currentMonthDate.getMonth() - 1);
+        renderCalendar(currentMonthDate);
+    });
+    
+    document.getElementById('next-month').addEventListener('click', () => {
+        currentMonthDate.setMonth(currentMonthDate.getMonth() + 1);
+        renderCalendar(currentMonthDate);
+    });
+    
+    // 點擊日曆日期的事件監聽器
+    calendarGrid.addEventListener('click', (e) => {
+        if (e.target.classList.contains('day-cell') && e.target.dataset.date) {
+            const date = e.target.dataset.date;
+            renderDailyRecords(date);
+        }
+    });
+});
