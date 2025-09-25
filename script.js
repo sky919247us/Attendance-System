@@ -386,7 +386,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     const locationLatInput = document.getElementById('location-lat');
     const locationLngInput = document.getElementById('location-lng');
     const addLocationBtn = document.getElementById('add-location-btn');
-
+    
+    // 處理 API 測試按鈕事件
+    document.getElementById('test-api-btn').addEventListener('click', () => {
+        // 這裡替換成您想要測試的 API action 名稱
+        const testAction = "testEndpoint";
+        
+        // 呼叫 API 函式
+        callApi(testAction, (res) => {
+            if (res.ok) {
+                showNotification("API 測試成功！回應：" + JSON.stringify(res.data), "success");
+            } else {
+                showNotification("API 測試失敗：" + res.msg, "error");
+            }
+        });
+    });
+    
     getLocationBtn.addEventListener('click', () => {
         if (!navigator.geolocation) {
             showNotification(t("ERROR_GEOLOCATION", { msg: "您的瀏覽器不支援地理位置功能。" }), "error");
