@@ -120,6 +120,18 @@
                 
                 <!-- Admin View -->
                 <section id="admin-view" class="space-y-6" style="display: none;">
+                    <div class="card p-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-1">待審核請求</h2>
+                        <p class="text-gray-500 mb-4">請處理員工提出的補打卡或虛擬卡請求。</p>
+                        <div id="pending-requests-container">
+                            <div id="requests-loading" class="text-center text-gray-500 py-4">正在載入請求...</div>
+                            <div id="requests-empty" class="text-center text-green-600 bg-green-50 p-4 rounded-lg" style="display: none;">
+                                <p class="font-semibold">太棒了！</p>
+                                <p>目前沒有任何待審核的請求。</p>
+                            </div>
+                            <ul id="pending-requests-list" class="space-y-3"></ul>
+                        </div>
+                    </div>
                     <div class="card p-6 mt-6">
                         <h2 class="text-xl font-bold text-gray-800 mb-2">新增打卡地點</h2>
                         <p class="text-gray-500 mb-4">輸入地點名稱，並使用您的當前位置作為經緯度。</p>
@@ -146,18 +158,7 @@
                             <button id="test-api-btn" class="w-full py-2 px-4 rounded-lg font-bold btn-primary">測試 API</button>
                         </div>
                     </div>
-                    <div class="card p-6">
-                        <h2 class="text-xl font-bold text-gray-800 mb-1">待審核請求</h2>
-                        <p class="text-gray-500 mb-4">請處理員工提出的補打卡或虛擬卡請求。</p>
-                        <div id="pending-requests-container">
-                            <div id="requests-loading" class="text-center text-gray-500 py-4">正在載入請求...</div>
-                            <div id="requests-empty" class="text-center text-green-600 bg-green-50 p-4 rounded-lg" style="display: none;">
-                                <p class="font-semibold">太棒了！</p>
-                                <p>目前沒有任何待審核的請求。</p>
-                            </div>
-                            <ul id="pending-requests-list" class="space-y-3"></ul>
-                        </div>
-                    </div>
+         
                 </section>
             </div>
             <footer class="mt-8 text-center text-sm text-gray-500">
