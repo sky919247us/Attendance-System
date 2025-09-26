@@ -387,6 +387,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const locationLngInput = document.getElementById('location-lng');
     const addLocationBtn = document.getElementById('add-location-btn');
     
+    let pendingRequests = []; // 新增：用於快取待審核的請求
+    
     // 全域變數，用於儲存地圖實例
     let mapInstance = null;
     let currentCoords = null;
@@ -399,7 +401,108 @@ document.addEventListener('DOMContentLoaded', async () => {
     let locationMarkers = L.layerGroup();
     let locationCircles = L.layerGroup();
 
+    /**
+     * 取得並渲染所有待審核的請求。
+     */
+    async function fetchAndRenderReviewRequests() {
+        const loadingEl = document.getElementById('requests-loading');
+        const emptyEl = document.getElementById('requests-empty');
+        const listEl = document.getElementById('pending-requests-list');
+        
+        loadingEl.style.display = 'block';
+        emptyEl.style.display = 'none';
+        listEl.innerHTML = '';
+        
+        try {
+            const res = await callApifetch("getReviewRequest");
+            
+            if (res.ok && Array.isArray(res.reviewRequest)) {
+                pendingRequests = res.reviewRequest; // 快取所有請求
+                
+                if (pendingRequests.length === 0) {
+                    emptyEl.style.display = 'block';
+                } else {
+                    renderReviewRequests(pendingRequests);
+                }
+            } else {
+                showNotification("取得待審核請求失敗：" + res.msg, "error");
+                emptyEl.style.display = 'block';
+            }
+        } catch (error) {
+            showNotification("取得待審核請求失敗，請檢查網路。", "error");
+            emptyEl.style.display = 'block';
+            console.error("Failed to fetch review requests:", error);
+        } finally {
+            loadingEl.style.display = 'none';
+        }
+    }
 
+    /**
+     * 根據資料渲染待審核列表。
+     * @param {Array<Object>} requests - 請求資料陣列。
+     */
+    function renderReviewRequests(requests) {
+        const listEl = document.getElementById('pending-requests-list');
+        listEl.innerHTML = '';
+        
+        requests.forEach((req, index) => {
+            const li = document.createElement('li');
+            li.className = 'p-4 bg-gray-50 rounded-lg shadow-sm flex flex-col space-y-2';
+            li.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <p class="text-sm font-semibold text-gray-800">${req.name} - ${req.remark}</p>
+                    <span class="text-xs text-gray-500">${req.applicationPeriod}</span>
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button data-index="${index}" class="approve-btn px-3 py-1 rounded-md text-sm font-bold btn-primary">核准</button>
+                    <button data-index="${index}" class="reject-btn px-3 py-1 rounded-md text-sm font-bold btn-warning">拒絕</button>
+                </div>
+            `;
+            listEl.appendChild(li);
+        });
+        
+        // 為新建立的按鈕添加事件監聽器
+        listEl.querySelectorAll('.approve-btn').forEach(button => {
+            button.addEventListener('click', (e) => handleReviewAction(e.target.dataset.index, 'approve'));
+        });
+        
+        listEl.querySelectorAll('.reject-btn').forEach(button => {
+            button.addEventListener('click', (e) => handleReviewAction(e.target.dataset.index, 'reject'));
+        });
+    }
+
+    /**
+     * 處理審核動作（核准或拒絕）。
+     * @param {number} index - 請求在陣列中的索引。
+     * @param {string} action - 'approve' 或 'reject'。
+     */
+    async function handleReviewAction(index, action) {
+        const request = pendingRequests[index];
+        if (!request) {
+            showNotification("找不到請求資料。", "error");
+            return;
+        }
+
+        // 這裡你需要一個唯一ID來識別要審核哪一筆資料，
+        // 但你後端目前沒有回傳ID。請修改後端，讓每個請求都帶有ID。
+        // 例如：const recordId = request.id;
+        const recordId = index + 2; // 暫時使用索引作為參考，實際應使用後端回傳的ID
+
+        const endpoint = action === 'approve' ? 'approveReview' : 'rejectReview';
+        
+        try {
+            const res = await callApifetch(`${endpoint}&id=${recordId}`);
+            if (res.ok) {
+                showNotification(`請求已${action === 'approve' ? '核准' : '拒絕'}！`, "success");
+                fetchAndRenderReviewRequests(); // 重新整理列表
+            } else {
+                showNotification(`審核失敗：${res.msg}`, "error");
+            }
+        } catch (err) {
+            showNotification("審核失敗，請檢查網路。", "error");
+            console.error(err);
+        }
+    }
     /**
      * 從後端取得所有打卡地點，並將它們顯示在地圖上。
      */
@@ -616,6 +719,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             renderCalendar(currentMonthDate);
         }else if (tabId === 'location-view') {
             initLocationMap(); // <-- 這裡改為呼叫新的地圖初始化函式
+        }else if (tabId === 'admin-view') {
+            fetchAndRenderReviewRequests();
         }
     };
     
