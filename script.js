@@ -463,11 +463,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         // 為新建立的按鈕添加事件監聽器
         listEl.querySelectorAll('.approve-btn').forEach(button => {
-            button.addEventListener('click', (e) => handleReviewAction(req.id, 'approve'));
+            button.addEventListener('click', (e) => handleReviewAction(e.target.dataset.index, 'approve'));
         });
         
         listEl.querySelectorAll('.reject-btn').forEach(button => {
-            button.addEventListener('click', (e) => handleReviewAction(req.id, 'reject'));
+            button.addEventListener('click', (e) => handleReviewAction(e.target.dataset.index, 'reject'));
         });
     }
 
@@ -483,8 +483,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        // 這裡需要一個唯一ID來識別要審核哪一筆資料，
-        const recordId = index + 2; // 應使用後端回傳的ID
+        // 直接使用後端回傳的 ID，不再自己計算
+        const recordId = request.id;
 
         const endpoint = action === 'approve' ? 'approveReview' : 'rejectReview';
         
@@ -515,7 +515,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (res.ok && Array.isArray(res.locations)) {
                 // 遍歷所有地點並在地圖上放置標記和圓形
                 res.locations.forEach(loc => {
-                    console.log(loc);
                     // 如果沒有容許誤差，則預設為 50 公尺
                     const punchInRadius = loc.scope || 50;
                     
