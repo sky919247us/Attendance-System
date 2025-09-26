@@ -414,13 +414,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (res.ok && Array.isArray(res.locations)) {
                 // 遍歷所有地點並在地圖上放置標記和圓形
                 res.locations.forEach(loc => {
+                    console.log(loc);
                     // 如果沒有容許誤差，則預設為 50 公尺
                     const punchInRadius = loc.scope || 50;
-                    
-                    // 加入標記點
-                    const locationMarker = L.marker([loc.lat, loc.lng]);
-                    locationMarker.bindPopup(`<b>${loc.name}</b>`);
-                    locationMarkers.addLayer(locationMarker);
                     
                     // 加入圓形範圍
                     const locationCircle = L.circle([loc.lat, loc.lng], {
