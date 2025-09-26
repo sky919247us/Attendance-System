@@ -392,7 +392,61 @@ document.addEventListener('DOMContentLoaded', async () => {
     let currentCoords = null;
     let marker = null;
     let circle = null;
+    /**
+     * 從後端取得所有打卡地點，並將它們顯示在地圖上。
+     */
+    // 全域變數，用於儲存地點標記和圓形
+    let locationMarkers = L.layerGroup();
+    let locationCircles = L.layerGroup();
 
+
+    /**
+     * 從後端取得所有打卡地點，並將它們顯示在地圖上。
+     */
+    async function fetchAndRenderLocationsOnMap() {
+        try {
+            const res = await callApifetch("getLocations");
+            
+            // 清除舊的地點標記和圓形
+            locationMarkers.clearLayers();
+            locationCircles.clearLayers();
+
+            if (res.ok && Array.isArray(res.locations)) {
+                // 遍歷所有地點並在地圖上放置標記和圓形
+                res.locations.forEach(loc => {
+                    // 如果沒有容許誤差，則預設為 50 公尺
+                    const punchInRadius = loc.scope || 50;
+                    
+                    // 加入標記點
+                    const locationMarker = L.marker([loc.lat, loc.lng]);
+                    locationMarker.bindPopup(`<b>${loc.name}</b>`);
+                    locationMarkers.addLayer(locationMarker);
+                    
+                    // 加入圓形範圍
+                    const locationCircle = L.circle([loc.lat, loc.lng], {
+                        color: 'red',
+                        fillColor: '#f03',
+                        fillOpacity: 0.2,
+                        radius: punchInRadius
+                    });
+                    locationCircle.bindPopup(`<b>${loc.name}</b><br>可打卡範圍：${punchInRadius}公尺`);
+                    locationCircles.addLayer(locationCircle);
+                });
+                
+                // 將所有地點標記和圓形一次性加到地圖上
+                locationMarkers.addTo(mapInstance);
+                locationCircles.addTo(mapInstance);
+
+                console.log("地點標記和範圍已成功載入地圖。");
+            } else {
+                showNotification("取得地點清單失敗：" + res.msg, "error");
+                console.error("Failed to fetch locations:", res.msg);
+            }
+        } catch (error) {
+            showNotification("取得地點清單失敗，請檢查網路。", "error");
+            console.error("Failed to fetch locations:", error);
+        }
+    }
     // 初始化地圖並取得使用者位置
     function initLocationMap() {
         const mapContainer = document.getElementById('map-container');
@@ -438,19 +492,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                     // 在地圖上放置標記
                     if (marker) mapInstance.removeLayer(marker);
                     marker = L.marker(currentCoords).addTo(mapInstance)
-                        .bindPopup("你現在在這裡")
+                        .bindPopup("現在位置")
                         .openPopup();
 
-                    // 畫出可打卡範圍，假設範圍為 50 公尺
-                    // 你可以依據實際需求調整這個半徑值
-                    const punchInRadius = 50;
-                    if (circle) mapInstance.removeLayer(circle);
-                    circle = L.circle(currentCoords, {
-                        color: 'blue',
-                        fillColor: '#3076ff',
-                        fillOpacity: 0.2,
-                        radius: punchInRadius
-                    }).addTo(mapInstance).bindPopup(`可打卡範圍：${punchInRadius}公尺`);
+
                 },
                 (error) => {
                     // 處理定位失敗
@@ -475,6 +520,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     showNotification(`定位失敗：${message}`, "error");
                 }
             );
+            // 成功取得使用者位置後，載入所有打卡地點
+            fetchAndRenderLocationsOnMap();
         } else {
             showNotification("您的瀏覽器不支援地理定位。", "error");
             statusEl.textContent = '不支援定位';
