@@ -463,11 +463,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         // 為新建立的按鈕添加事件監聽器
         listEl.querySelectorAll('.approve-btn').forEach(button => {
-            button.addEventListener('click', (e) => handleReviewAction(e.target.dataset.index, 'approve'));
+            button.addEventListener('click', (e) => handleReviewAction(req.id, 'approve'));
         });
         
         listEl.querySelectorAll('.reject-btn').forEach(button => {
-            button.addEventListener('click', (e) => handleReviewAction(e.target.dataset.index, 'reject'));
+            button.addEventListener('click', (e) => handleReviewAction(req.id, 'reject'));
         });
     }
 
@@ -483,10 +483,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        // 這裡你需要一個唯一ID來識別要審核哪一筆資料，
-        // 但你後端目前沒有回傳ID。請修改後端，讓每個請求都帶有ID。
-        // 例如：const recordId = request.id;
-        const recordId = index + 2; // 暫時使用索引作為參考，實際應使用後端回傳的ID
+        // 這裡需要一個唯一ID來識別要審核哪一筆資料，
+        const recordId = index + 2; // 應使用後端回傳的ID
 
         const endpoint = action === 'approve' ? 'approveReview' : 'rejectReview';
         
