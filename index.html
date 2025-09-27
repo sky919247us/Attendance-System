@@ -3,7 +3,7 @@
     <head>
         <link rel="icon" href="/Attendance-System/0rigin.png" type="image/x-icon">
             <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-                <title>APP_TITLE</title>
+                <title data-i18n="APP_TITLE">APP_TITLE</title>
                 <script src="https://cdn.tailwindcss.com"></script>
                 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
                     <link rel="stylesheet" href="style.css">
@@ -21,8 +21,8 @@
                 <div class="flex items-center space-x-3">
                     <img id="profile-img" src="https://placehold.co/40x40/e0e0e0/757575?text=U" alt="頭像" class="w-10 h-10 rounded-full">
                         <div>
-                            <p id="user-name" class="font-semibold text-gray-800">使用者名稱</p>
-                            <p id="welcome-mes" class="text-xs text-gray-500">WELCOME_BACK</p>
+                            <p id="user-name" data-i18n="USER_NAME_LABEL" class="font-semibold text-gray-800">使用者名稱</p>
+                            <p id="welcome-mes" data-i18n="WELCOME_BACK" class="text-xs text-gray-500">歡迎回來！</p>
                         </div>
                 </div>
                 <button id="logout-btn" class="text-sm font-medium text-gray-600 hover:text-indigo-600">登出</button>
@@ -45,7 +45,7 @@
                     <button id="tab-dashboard-btn" class="py-2 px-4 rounded-full font-bold text-sm text-white bg-indigo-600">儀表板</button>
                     <button id="tab-monthly-btn" class="py-2 px-4 rounded-full font-bold text-sm text-gray-600 bg-gray-200">月份檢視</button>
                     <button id="tab-location-btn" class="py-2 px-4 rounded-full font-bold text-sm text-gray-600 bg-gray-200">定位</button>
-                    <button id="tab-admin-btn" class="py-2 px-4 rounded-full font-bold text-sm text-gray-600 bg-gray-200">管理員</button>
+                    <button id="tab-admin-btn" data-i18n="TAB_ADMIN" class="py-2 px-4 rounded-full font-bold text-sm text-gray-600 bg-gray-200">管理員</button>
                 </div>
                 
                 <!-- Dashboard View -->
@@ -121,7 +121,7 @@
                 <!-- Admin View -->
                 <section id="admin-view" class="space-y-6" style="display: none;">
                     <div class="card p-6">
-                        <h2 class="text-xl font-bold text-gray-800 mb-1">待審核請求</h2>
+                        <h2 data-i18n="WELCOME_BACK" class="text-xl font-bold text-gray-800 mb-1">待審核請求</h2>
                         <p class="text-gray-500 mb-4">請處理員工提出的補打卡或虛擬卡請求。</p>
                         <div id="pending-requests-container">
                             <div id="requests-loading" class="text-center text-gray-500 py-4">正在載入請求...</div>
