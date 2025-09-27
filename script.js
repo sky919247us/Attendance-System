@@ -624,6 +624,19 @@ document.addEventListener('DOMContentLoaded', async () => {
             statusEl.textContent = '不支援定位';
         }
     }
+    // 修改後的 renderTranslations 函式
+    function renderTranslations() {
+        // 翻譯網頁標題
+        document.title = t("APP_TITLE");
+
+        const elementsToTranslate = document.querySelectorAll('[data-i18n]');
+        elementsToTranslate.forEach(element => {
+            const key = element.getAttribute('data-i18n');
+            if (translations[key]) {
+                element.textContent = t(key);
+            }
+        });
+    }
     
     // 處理 API 測試按鈕事件
     document.getElementById('test-api-btn').addEventListener('click', async () => {
@@ -739,8 +752,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadTranslations(currentLang);
     
     // 初始文字設定
-    document.getElementById("appTitle").textContent = t("APP_TITLE");
-    document.getElementById("status").textContent = t("SUBTITLE_LOGIN");
+    // 翻譯網頁標題
+    document.title = t("APP_TITLE");
+    document.getElementById("welcome-mes").textContent = t("WELCOME_BACK");
+    document.getElementById("logout-btn").textContent = t("BTN_LOGOUT");
+    document.getElementById("appTitle").textContent = t("SUBTITLE_LOGIN");
+    document.getElementById("status").textContent = t("CHECKING_LOGIN");
+    document.getElementById("login-btn").textContent = t("BTN_LOGOIN");
+    document.getElementById("tab-dashboard-btn").textContent = t("BTN_LOGOIN");
+    renderTranslations();
     
     const params = new URLSearchParams(window.location.search);
     const otoken = params.get('code');
