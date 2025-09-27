@@ -1,5 +1,6 @@
+\
 {
-  "APP_TITLE": "零點考勤系統",
+  "APP_TITLE": "零點考勤系統1",
   "CHECKING_LOGIN": "正在檢查登入狀態…",
   "SUBTITLE_LOGIN": "歡迎使用零點考勤系統",
   "FOOTER_NOTICE": "※ 登入狀態保存在你的瀏覽器（localStorage）。若換裝置或清除資料需重新登入。",
