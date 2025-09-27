@@ -370,10 +370,6 @@ async function renderDailyRecords(dateKey) {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // 自動替換文字
-    // 翻譯網頁標題
-    document.title = t("APP_TITLE");
-    document.getElementById("welcome-mes").textContent = t("WELCOME_BACK");
     
     const loginBtn = document.getElementById('login-btn');
     const logoutBtn = document.getElementById('logout-btn');
