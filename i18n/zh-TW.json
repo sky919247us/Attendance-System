@@ -2,6 +2,8 @@
 {
   "_comment": "＿＿＿＿＿以下是前端的翻譯＿＿＿＿",
   "APP_TITLE": "零點考勤系統1",
+  "WELCOME_BACK": "歡迎回來！",
+  
   "CHECKING_LOGIN": "正在檢查登入狀態…",
   "SUBTITLE_LOGIN": "歡迎使用零點考勤系統",
   "FOOTER_NOTICE": "※ 登入狀態保存在你的瀏覽器一天。若換裝置或清除資料需重新登入。",
@@ -9,7 +11,7 @@
   "ADJUST_PUNCH_TITLE": "補打卡",
   "ADJUST_PUNCH_DATETIME_LABEL": "選擇補打卡日期與時間：",
     
-  "WELCOME_BACK": "歡迎回來！",
+
   "PUNCH_SUCCESS": "✅{type}打卡成功",
   "ADJUST_PUNCH_SUCCESS": "✅{type} 補打卡成功",
   
