@@ -193,8 +193,9 @@ async function checkAbnormal() {
                         <button data-i18n="ADJUST_BUTTON_TEXT" data-date="${record.date}" data-reason="${record.reason}" class="adjust-btn text-sm font-semibold text-indigo-600 hover:text-indigo-800">補打卡</button>
                     `;
                     abnormalList.appendChild(li);
+                    renderTranslations(li);
                 });
-                renderTranslations(abnormalList);
+            
             } else {
                 abnormalRecordsSection.style.display = 'block';
                 recordsEmpty.style.display = 'block';
