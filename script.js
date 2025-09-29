@@ -611,7 +611,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     // 在地圖上放置標記
                     if (marker) mapInstance.removeLayer(marker);
                     marker = L.marker(currentCoords).addTo(mapInstance)
-                        .bindPopup(t('DETECTION_FAILED'))
+                        .bindPopup(t('CURRENT_LOCATION'))
                         .openPopup();
 
 
