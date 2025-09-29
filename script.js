@@ -258,7 +258,10 @@ async function renderCalendar(date) {
 function renderCalendarWithData(year, month, today, records, calendarGrid, monthTitle) {
     // 確保日曆網格在每次渲染前被清空
     calendarGrid.innerHTML = '';
-    monthTitle.textContent = t("MONTH_YEAR_TEMPLATE");
+    monthTitle.textContent = t("MONTH_YEAR_TEMPLATE", {
+        year: year,
+        month: month
+    });
     
     // 取得該月第一天是星期幾
     const firstDayOfMonth = new Date(year, month, 1).getDay();
@@ -332,7 +335,10 @@ async function renderDailyRecords(dateKey) {
     const dailyRecordsEmpty = document.getElementById('daily-records-empty');
     const recordsLoading = document.getElementById("records-loading");
     
-    dailyRecordsTitle.textContent = t("DAILY_RECORDS_TITLE");
+    dailyRecordsTitle.textContent = t("DAILY_RECORDS_TITLE", {
+        dateKey: dateKey
+    });
+
     dailyRecordsList.innerHTML = '';
     dailyRecordsEmpty.style.display = 'none';
     recordsLoading.style.display = 'block';
