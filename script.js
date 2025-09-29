@@ -33,7 +33,6 @@ function t(code, params = {}) {
     }
     return text;
 }
-// 修改後的 renderTranslations 函式
 function renderTranslations() {
     // 翻譯網頁標題
     document.title = t("APP_TITLE");
@@ -41,17 +40,25 @@ function renderTranslations() {
     const elementsToTranslate = document.querySelectorAll('[data-i18n]');
     elementsToTranslate.forEach(element => {
         const key = element.getAttribute('data-i18n');
-        // 檢查元素是否有對應的翻譯鍵值
-        if (translations[key]) {
-            // 根據不同元素類型來設定翻譯文字
-            if (element.tagName === 'INPUT') {
-                element.placeholder = t(key);
-            } else if (element.tagName === 'BUTTON' || element.tagName === 'A' || element.tagName === 'P' || element.tagName === 'H1' || element.tagName === 'H2' || element.tagName === 'H3' || element.tagName === 'LABEL') {
-                element.textContent = t(key);
+        const translatedText = t(key);
+
+        if (translatedText) {
+            if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                // 如果有 placeholder
+                if (element.hasAttribute('placeholder')) {
+                    element.placeholder = translatedText;
+                } else {
+                    element.value = translatedText; // 例如 <input type="button">
+                }
+            } else if (element.tagName === 'BUTTON') {
+                element.textContent = translatedText;
+            } else {
+                element.textContent = translatedText;
             }
         }
     });
 }
+
 /**
  * 透過 fetch API 呼叫後端 API。
  * @param {string} action - API 的動作名稱。
