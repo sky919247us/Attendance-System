@@ -33,31 +33,27 @@ function t(code, params = {}) {
     }
     return text;
 }
-function renderTranslations() {
-    // 翻譯網頁標題
-    document.title = t("APP_TITLE");
+// renderTranslations 可接受一個容器參數
+function renderTranslations(container = document) {
+    // 翻譯網頁標題（只在整頁翻譯時執行）
+    if (container === document) {
+        document.title = t("APP_TITLE");
+    }
 
-    const elementsToTranslate = document.querySelectorAll('[data-i18n]');
+    const elementsToTranslate = container.querySelectorAll('[data-i18n]');
     elementsToTranslate.forEach(element => {
         const key = element.getAttribute('data-i18n');
         const translatedText = t(key);
-
         if (translatedText) {
-            if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
-                // 如果有 placeholder
-                if (element.hasAttribute('placeholder')) {
-                    element.placeholder = translatedText;
-                } else {
-                    element.value = translatedText; // 例如 <input type="button">
-                }
-            } else if (element.tagName === 'BUTTON') {
-                element.textContent = translatedText;
+            if (element.tagName === 'INPUT') {
+                element.placeholder = translatedText;
             } else {
                 element.textContent = translatedText;
             }
         }
     });
 }
+
 
 /**
  * 透過 fetch API 呼叫後端 API。
@@ -198,6 +194,7 @@ async function checkAbnormal() {
                     `;
                     abnormalList.appendChild(li);
                 });
+                renderTranslations(abnormalList);
             } else {
                 abnormalRecordsSection.style.display = 'block';
                 recordsEmpty.style.display = 'block';
@@ -387,7 +384,9 @@ async function renderDailyRecords(dateKey) {
                     <p data-i18n="RECORD_REASON_PREFIX" class="text-sm text-gray-500">系統判斷：${records.reason}</p>
                 `;
                 dailyRecordsList.appendChild(li);
+                renderTranslations(li);
             });
+            
         } else {
             dailyRecordsEmpty.style.display = 'block';
         }
@@ -486,6 +485,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </div>
             `;
             listEl.appendChild(li);
+            renderTranslations(li);
         });
         
         // 為新建立的按鈕添加事件監聽器
@@ -872,7 +872,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </div>
             `;
             adjustmentFormContainer.innerHTML = formHtml;
-            
+            renderTranslations(adjustmentFormContainer);
             const adjustDateTimeInput = document.getElementById("adjustDateTime");
             let defaultTime = "09:00"; // 預設為上班時間
             if (reason.includes("下班")) {
