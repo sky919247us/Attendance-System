@@ -937,7 +937,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         currentMonthDate.setMonth(currentMonthDate.getMonth() + 1);
         renderCalendar(currentMonthDate);
     });
-    
+    // 語系切換事件
+    document.getElementById('language-switcher').addEventListener('change', (e) => {
+        const newLang = e.target.value;
+        loadTranslations(newLang);
     // 點擊日曆日期的事件監聽器
     calendarGrid.addEventListener('click', (e) => {
         if (e.target.classList.contains('day-cell') && e.target.dataset.date) {
