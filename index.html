@@ -21,7 +21,7 @@
                 <div class="flex items-center space-x-3">
                     <img id="profile-img" src="https://placehold.co/40x40/e0e0e0/757575?text=U" alt="頭像" class="w-10 h-10 rounded-full">
                         <div>
-                            <p id="user-name" data-i18n="USER_NAME_LABEL" class="font-semibold text-gray-800">使用者名稱</p>
+                            <p id="user-name" class="font-semibold text-gray-800">使用者名稱</p>
                             <p id="welcome-mes" data-i18n="WELCOME_BACK" class="text-xs text-gray-500">歡迎回來！</p>
                         </div>
                 </div>
@@ -48,7 +48,7 @@
                 <div class="flex justify-center space-x-2 mb-6">
                     <button id="tab-dashboard-btn" data-i18n="TAB_DASHBOARD" class="py-2 px-4 rounded-full font-bold text-sm text-white bg-indigo-600">儀表板</button>
                     <button id="tab-monthly-btn" data-i18n="TAB_MONTHLY" class="py-2 px-4 rounded-full font-bold text-sm text-gray-600 bg-gray-200">月份檢視</button>
-                    <button id="tab-location-btn" data-i18n="TAB_ADMIN" class="py-2 px-4 rounded-full font-bold text-sm text-gray-600 bg-gray-200">定位</button>
+                    <button id="tab-location-btn" data-i18n="TAB_LOCATION" class="py-2 px-4 rounded-full font-bold text-sm text-gray-600 bg-gray-200">定位</button>
                     <button id="tab-admin-btn" data-i18n="TAB_ADMIN" class="py-2 px-4 rounded-full font-bold text-sm text-gray-600 bg-gray-200">管理員</button>
                 </div>
                 
@@ -69,7 +69,7 @@
                         <p data-i18n="ABNORMAL_RECORDS_DESCRIPTION" class="text-gray-500 mb-4">系統會自動偵測本月異常紀錄，您可以在此進行補打卡。</p>
                         <div id="abnormal-records-container">
                             <div id="records-loading" data-i18n="RECORDS_LOADING" class="text-center text-gray-500 py-4">正在載入紀錄...</div>
-                            <div id="records-empty" data-i18n="RECORDS_LOADING" class="text-center text-green-600 bg-green-50 p-4 rounded-lg" style="display: none;">
+                            <div id="records-empty" class="text-center text-green-600 bg-green-50 p-4 rounded-lg" style="display: none;">
                                 <p data-i18n="RECORDS_EMPTY_TITLE" class="font-semibold">太棒了！</p>
                                 <p data-i18n="RECORDS_EMPTY_MESSAGE"  >本月目前沒有任何異常紀錄。</p>
                             </div>

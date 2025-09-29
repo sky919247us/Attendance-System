@@ -752,7 +752,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     localStorage.setItem("lang", currentLang);
     await loadTranslations(currentLang);
     
-    // 初始文字設定
 
     
     const params = new URLSearchParams(window.location.search);
