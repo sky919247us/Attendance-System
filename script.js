@@ -574,8 +574,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // 顯示載入狀態
         mapContainer.innerHTML = t("MAP_LOADING");
-        statusEl.textContent = '正在偵測位置...';
-        coordsEl.textContent = '未知';
+        statusEl.textContent = t('DETECTING_LOCATION');
+        coordsEl.textContent = t('UNKNOWN_LOCATION');
 
         // 建立地圖
         mapInstance = L.map('map-container', {
@@ -596,7 +596,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     currentCoords = [latitude, longitude];
 
                     // 更新狀態顯示
-                    statusEl.textContent = '偵測成功';
+                    statusEl.textContent = t('DETECTION_SUCCESS');
                     coordsEl.textContent = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
                     
                     // 設定地圖視圖
@@ -605,29 +605,29 @@ document.addEventListener('DOMContentLoaded', async () => {
                     // 在地圖上放置標記
                     if (marker) mapInstance.removeLayer(marker);
                     marker = L.marker(currentCoords).addTo(mapInstance)
-                        .bindPopup("現在位置")
+                        .bindPopup(t('DETECTION_FAILED'))
                         .openPopup();
 
 
                 },
                 (error) => {
                     // 處理定位失敗
-                    statusEl.textContent = '偵測失敗';
+                    statusEl.textContent = t('ERROR_GEOLOCATION_PERMISSION_DENIED');
                     console.error("Geolocation failed:", error);
                     
                     let message;
                     switch(error.code) {
                         case error.PERMISSION_DENIED:
-                            message = "使用者拒絕了位置請求。";
+                            message = t('ERROR_GEOLOCATION_PERMISSION_DENIED');
                             break;
                         case error.POSITION_UNAVAILABLE:
-                            message = "位置資訊無法取得。";
+                            message = t('ERROR_GEOLOCATION_UNAVAILABLE');
                             break;
                         case error.TIMEOUT:
-                            message = "位置請求超時。";
+                            message = t('ERROR_GEOLOCATION_TIMEOUT');
                             break;
                         case error.UNKNOWN_ERROR:
-                            message = "發生未知錯誤。";
+                            message = t('ERROR_GEOLOCATION_UNKNOWN');
                             break;
                     }
                     showNotification(`定位失敗：${message}`, "error");
@@ -636,7 +636,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             // 成功取得使用者位置後，載入所有打卡地點
             fetchAndRenderLocationsOnMap();
         } else {
-            showNotification("您的瀏覽器不支援地理定位。", "error");
+            showNotification(t('ERROR_BROWSER_NOT_SUPPORTED'), "error");
             statusEl.textContent = '不支援定位';
         }
     }
@@ -667,7 +667,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     getLocationBtn.addEventListener('click', () => {
         if (!navigator.geolocation) {
-            showNotification(t("ERROR_GEOLOCATION", { msg: "您的瀏覽器不支援地理位置功能。" }), "error");
+            showNotification(t("ERROR_GEOLOCATION", { msg: t('ERROR_BROWSER_NOT_SUPPORTED') }), "error");
             return;
         }
         
@@ -847,14 +847,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             const reason = e.target.dataset.reason;
             const formHtml = `
                 <div class="p-4 border-t border-gray-200 fade-in">
-                    <p class="font-semibold mb-2">補打卡：<span class="text-indigo-600">${date}</span></p>
+                    <p data-i18n="ADJUST_BUTTON_TEXT" class="font-semibold mb-2">補打卡：<span class="text-indigo-600">${date}</span></p>
                     <div class="form-group mb-3">
-                        <label for="adjustDateTime" class="block text-sm font-medium text-gray-700 mb-1">選擇日期與時間：</label>
+                        <label for="adjustDateTime" data-i18n="SELECT_DATETIME_LABEL" class="block text-sm font-medium text-gray-700 mb-1">選擇日期與時間：</label>
                         <input id="adjustDateTime" type="datetime-local" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        <button data-type="in" class="submit-adjust-btn w-full py-2 px-4 rounded-lg font-bold btn-secondary">補上班卡</button>
-                        <button data-type="out" class="submit-adjust-btn w-full py-2 px-4 rounded-lg font-bold btn-secondary">補下班卡</button>
+                        <button data-type="in" data-i18n="BTN_ADJUST_IN" class="submit-adjust-btn w-full py-2 px-4 rounded-lg font-bold btn-secondary">補上班卡</button>
+                        <button data-type="out" data-i18n="BTN_ADJUST_OUT" class="submit-adjust-btn w-full py-2 px-4 rounded-lg font-bold btn-secondary">補下班卡</button>
                     </div>
                 </div>
             `;
