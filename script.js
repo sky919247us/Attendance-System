@@ -19,6 +19,7 @@ async function loadTranslations(lang) {
         translations = await res.json();
         currentLang = lang;
         localStorage.setItem("lang", lang);
+        renderTranslations();
     } catch (err) {
         console.error("載入語系失敗:", err);
     }
