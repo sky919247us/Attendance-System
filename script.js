@@ -759,7 +759,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById("appTitle").textContent = t("SUBTITLE_LOGIN");
     document.getElementById("status").textContent = t("CHECKING_LOGIN");
     document.getElementById("login-btn").textContent = t("BTN_LOGOIN");
-    document.getElementById("tab-dashboard-btn").textContent = t("BTN_LOGOIN");
+    document.getElementById("tab-dashboard-btn").textContent = t("TAB_DASHBOARD");
     renderTranslations();
     
     const params = new URLSearchParams(window.location.search);

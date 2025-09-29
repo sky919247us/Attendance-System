@@ -25,16 +25,16 @@
                             <p id="welcome-mes" data-i18n="WELCOME_BACK" class="text-xs text-gray-500">歡迎回來！</p>
                         </div>
                 </div>
-                <button id="logout-btn" class="text-sm font-medium text-gray-600 hover:text-indigo-600">登出</button>
+                <button id="logout-btn" data-i18n="BTN_LOGOUT" class="text-sm font-medium text-gray-600 hover:text-indigo-600">登出</button>
             </header>
             
             <!-- Login Section -->
             <section id="login-section" class="text-center p-8 card fade-in">
                 <img src="/Attendance-System/0rigin.png" alt="打卡系統橫幅圖" class="main-image">
-                    <h1 id="appTitle" class="text-2xl font-bold text-gray-800 mb-2">歡迎零點考勤系統</h1>
-                    <p class="text-gray-600 mb-6" id="status">請點擊登入以繼續。</p>
+                    <h1 id="appTitle" data-i18n="SUBTITLE_LOGIN" class="text-2xl font-bold text-gray-800 mb-2">歡迎零點考勤系統</h1>
+                    <p class="text-gray-600 mb-6" data-i18n="LOGIN_INFO" id="status">請點擊登入以繼續。</p>
                     <div id="login" class="space-y-4">
-                        <button id="login-btn" class="w-full py-3 px-4 rounded-lg font-bold btn-primary" style="display: none;">使用LINE登入</button>
+                        <button id="login-btn" data-i18n="BTN_LOGOIN" class="w-full py-3 px-4 rounded-lg font-bold btn-primary" style="display: none;">使用LINE登入</button>
                     </div>
             </section>
             
@@ -42,31 +42,32 @@
             <div id="main-app" class="fade-in" style="display: none;">
                 <!-- Tab Navigation -->
                 <div class="flex justify-center space-x-2 mb-6">
-                    <button id="tab-dashboard-btn" class="py-2 px-4 rounded-full font-bold text-sm text-white bg-indigo-600">儀表板</button>
-                    <button id="tab-monthly-btn" class="py-2 px-4 rounded-full font-bold text-sm text-gray-600 bg-gray-200">月份檢視</button>
-                    <button id="tab-location-btn" class="py-2 px-4 rounded-full font-bold text-sm text-gray-600 bg-gray-200">定位</button>
+                    <button id="tab-dashboard-btn" data-i18n="TAB_DASHBOARD" class="py-2 px-4 rounded-full font-bold text-sm text-white bg-indigo-600">儀表板</button>
+                    <button id="tab-monthly-btn" data-i18n="TAB_MONTHLY" class="py-2 px-4 rounded-full font-bold text-sm text-gray-600 bg-gray-200">月份檢視</button>
+                    <button id="tab-location-btn" data-i18n="TAB_ADMIN" class="py-2 px-4 rounded-full font-bold text-sm text-gray-600 bg-gray-200">定位</button>
                     <button id="tab-admin-btn" data-i18n="TAB_ADMIN" class="py-2 px-4 rounded-full font-bold text-sm text-gray-600 bg-gray-200">管理員</button>
                 </div>
                 
                 <!-- Dashboard View -->
                 <main id="dashboard-view" class="space-y-6">
                     <div class="card p-6">
-                        <h2 class="text-xl font-bold text-gray-800 mb-1">打卡專區</h2>
-                        <p class="text-gray-500 mb-4">請點擊下方按鈕進行上班或下班打卡。</p>
+                        <h2 data-i18n="PUNCH_SECTION_TITLE" class="text-xl font-bold text-gray-800 mb-1">打卡專區</h2>
+                        <p  data-i18n="PUNCH_SECTION_DESCRIPTION" lass="text-gray-500 mb-4">請點擊下方按鈕進行上班或下班打卡。</p>
                         <div id="punch-actions" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <button id="punch-in-btn" class="w-full py-3 px-4 rounded-lg font-bold btn-primary">上班打卡</button>
-                            <button id="punch-out-btn" class="w-full py-3 px-4 rounded-lg font-bold btn-secondary">下班打卡</button>
+                            <button id="punch-in-btn" data-i18n="PUNCH_IN_LABEL"
+                                class="w-full py-3 px-4 rounded-lg font-bold btn-primary">上班打卡</button>
+                            <button id="punch-out-btn" data-i18n="PUNCH_OUT_LABEL" class="w-full py-3 px-4 rounded-lg font-bold btn-secondary">下班打卡</button>
                         </div>
                     </div>
                     
                     <div id="abnormal-records-section" class="card p-6" style="display: none;">
-                        <h2 class="text-xl font-bold text-gray-800 mb-1">考勤紀錄</h2>
-                        <p class="text-gray-500 mb-4">系統會自動偵測本月異常紀錄，您可以在此進行補打卡。</p>
+                        <h2 data-i18n="ABNORMAL_RECORDS_TITLE" class="text-xl font-bold text-gray-800 mb-1">考勤紀錄</h2>
+                        <p data-i18n="ABNORMAL_RECORDS_DESCRIPTION" class="text-gray-500 mb-4">系統會自動偵測本月異常紀錄，您可以在此進行補打卡。</p>
                         <div id="abnormal-records-container">
                             <div id="records-loading" class="text-center text-gray-500 py-4">正在載入紀錄...</div>
-                            <div id="records-empty" class="text-center text-green-600 bg-green-50 p-4 rounded-lg" style="display: none;">
-                                <p class="font-semibold">太棒了！</p>
-                                <p>本月目前沒有任何異常紀錄。</p>
+                            <div id="records-empty" data-i18n="RECORDS_LOADING" class="text-center text-green-600 bg-green-50 p-4 rounded-lg" style="display: none;">
+                                <p data-i18n="RECORDS_EMPTY_TITLE" class="font-semibold">太棒了！</p>
+                                <p data-i18n="RECORDS_EMPTY_MESSAGE"  >本月目前沒有任何異常紀錄。</p>
                             </div>
                             <ul id="abnormal-list" class="space-y-3"></ul>
                         </div>
@@ -83,13 +84,13 @@
                             <button id="next-month" class="text-gray-600 p-2 rounded-full hover:bg-gray-100">►</button>
                         </div>
                         <div class="grid grid-cols-7 text-center text-sm font-semibold text-gray-500 mb-2">
-                            <span>日</span>
-                            <span>一</span>
-                            <span>二</span>
-                            <span>三</span>
-                            <span>四</span>
-                            <span>五</span>
-                            <span>六</span>
+                            <span data-i18n="WEEK_SUNDAY" >日</span>
+                            <span data-i18n="WEEK_MONDAY" >一</span>
+                            <span data-i18n="WEEK_TUESDAY" >二</span>
+                            <span data-i18n="WEEK_WEDNESDAY" >三</span>
+                            <span data-i18n="WEEK_THURSDAY" >四</span>
+                            <span data-i18n="WEEK_FRIDAY" >五</span>
+                            <span data-i18n="WEEK_SATURDAY" >六</span>
                         </div>
                         <div id="calendar-grid" class="grid grid-cols-7 gap-1"></div>
                     </div>
@@ -97,7 +98,7 @@
                     <div id="daily-records-card" class="card p-6" style="display: none;">
                         <h4 id="daily-records-title" class="text-xl font-bold text-gray-800 mb-2"></h4>
                         <ul id="daily-records-list" class="space-y-3"></ul>
-                        <div id="daily-records-empty" class="text-center text-gray-500 py-4" style="display: none;">
+                        <div id="daily-records-empty" data-i18n="DAILY_RECORDS_EMPTY" class="text-center text-gray-500 py-4" style="display: none;">
                             該日沒有打卡紀錄。
                         </div>
                     </div>
@@ -106,14 +107,20 @@
                 <!-- Location View -->
                 <section id="location-view" class="space-y-6" style="display: none;">
                     <div class="card p-6">
-                        <h2 class="text-xl font-bold text-gray-800 mb-1">當前位置</h2>
-                        <p class="text-gray-500 mb-4">系統將透過 GPS 偵測您的位置。</p>
-                        <div id="map-container" class="w-full h-64 rounded-lg mb-4 bg-gray-200 flex items-center justify-center text-gray-500">
+                        <h2 data-i18n="CURRENT_LOCATION_TITLE" class="text-xl font-bold text-gray-800 mb-1">當前位置</h2>
+                        <p data-i18n="CURRENT_LOCATION_DESCRIPTION" class="text-gray-500 mb-4">系統將透過 GPS 偵測您的位置。</p>
+                        <div id="map-container" data-i18n="MAP_LOADING" class="w-full h-64 rounded-lg mb-4 bg-gray-200 flex items-center justify-center text-gray-500">
                             正在載入地圖...
                         </div>
                         <div class="bg-gray-50 p-4 rounded-lg">
-                            <p class="text-sm text-gray-600"><strong>狀態：</strong> <span id="location-status">未偵測</span></p>
-                            <p class="text-sm text-gray-600"><strong>經緯度：</strong> <span id="location-coords">未知</span></p>
+                            <p class="text-sm text-gray-600">
+                            <strong data-i18n="LOCATION_STATUS_LABEL">狀態：</strong>
+                            <span id="location-status" ata-i18n="LOCATION_STATUS_PENDING">未偵測</span>
+                            </p>
+                            <p  dclass="text-sm text-gray-600">
+                            <strong data-i18n="COORDINATES_LABEL">經緯度：</strong>
+                            <span id="location-coords" data-i18n="COORDINATES_UNKNOWN">未知</span>
+                            </p>
                         </div>
                     </div>
                 </section>
@@ -121,49 +128,53 @@
                 <!-- Admin View -->
                 <section id="admin-view" class="space-y-6" style="display: none;">
                     <div class="card p-6">
-                        <h2 data-i18n="WELCOME_BACK" class="text-xl font-bold text-gray-800 mb-1">待審核請求</h2>
-                        <p class="text-gray-500 mb-4">請處理員工提出的補打卡或虛擬卡請求。</p>
+                        <h2 data-i18n="PENDING_REQUESTS_TITLE" class="text-xl font-bold text-gray-800 mb-1">待審核請求</h2>
+                        <p data-i18n="PENDING_REQUESTS_DESCRIPTION" class="text-gray-500 mb-4">請處理員工提出的補打卡或虛擬卡請求。</p>
                         <div id="pending-requests-container">
-                            <div id="requests-loading" class="text-center text-gray-500 py-4">正在載入請求...</div>
+                            <div id="requests-loading" data-i18n="REQUESTS_LOADING" class="text-center text-gray-500 py-4">正在載入請求...</div>
                             <div id="requests-empty" class="text-center text-green-600 bg-green-50 p-4 rounded-lg" style="display: none;">
-                                <p class="font-semibold">太棒了！</p>
-                                <p>目前沒有任何待審核的請求。</p>
+                                <p data-i18n="REQUESTS_EMPTY_TITLE" class="font-semibold">太棒了！</p>
+                                <p
+                                data-i18n="REQUESTS_EMPTY_MESSAGE">目前沒有任何待審核的請求。</p>
                             </div>
                             <ul id="pending-requests-list" class="space-y-3"></ul>
                         </div>
                     </div>
                     <div class="card p-6 mt-6">
-                        <h2 class="text-xl font-bold text-gray-800 mb-2">新增打卡地點</h2>
-                        <p class="text-gray-500 mb-4">輸入地點名稱，並使用您的當前位置作為經緯度。</p>
+                        <h2 data-i18n="ADD_LOCATION_TITLE" class="text-xl font-bold text-gray-800 mb-2">新增打卡地點</h2>
+                        <p data-i18n="ADD_LOCATION_DESCRIPTION" class="text-gray-500 mb-4">輸入地點名稱，並使用您的當前位置作為經緯度。</p>
                         <div class="space-y-4">
                             <div>
-                                <label for="location-name" class="block text-sm font-medium text-gray-700">地點名稱</label>
+                                <label data-i18n="LOCATION_NAME_LABEL" for="location-name" class="block text-sm font-medium text-gray-700">地點名稱</label>
                                 <input type="text" id="location-name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700">經緯度 (Latitude / Longitude)</label>
+                                <label data-i18n="COORDINATES_LAT_LNG_LABEL" class="block text-sm font-medium text-gray-700">經緯度 (Latitude / Longitude)</label>
                                 <div class="mt-1 flex space-x-2">
                                     <input type="text" id="location-lat" placeholder="緯度" readonly class="block w-1/2 rounded-md border-gray-300 bg-gray-100 shadow-sm sm:text-sm">
                                         <input type="text" id="location-lng" placeholder="經度" readonly class="block w-1/2 rounded-md border-gray-300 bg-gray-100 shadow-sm sm:text-sm">
                                 </div>
                             </div>
-                            <button id="get-location-btn" class="w-full py-2 px-4 rounded-lg font-bold btn-secondary">取得當前位置</button>
-                            <button id="add-location-btn" class="w-full py-2 px-4 rounded-lg font-bold btn-primary" disabled>新增地點</button>
+                            <button data-i18n="GET_LOCATION_BTN" id="get-location-btn" class="w-full py-2 px-4 rounded-lg font-bold btn-secondary">取得當前位置</button>
+                            <button data-i18n="ADD_LOCATION_BTN" id="add-location-btn" class="w-full py-2 px-4 rounded-lg font-bold btn-primary" disabled>新增地點</button>
                         </div>
                     </div>
                     <div class="card p-6 mt-6">
-                        <h2 class="text-xl font-bold text-gray-800 mb-2">API 測試區</h2>
-                        <p class="text-gray-500 mb-4">點擊下方按鈕以測試新的 API 功能。</p>
+                        <h2 data-i18n="API_TEST_TITLE" class="text-xl font-bold text-gray-800 mb-2">API 測試區</h2>
+                        <p data-i18n="API_TEST_DESCRIPTION" class="text-gray-500 mb-4">點擊下方按鈕以測試新的 API 功能。</p>
                         <div>
-                            <button id="test-api-btn" class="w-full py-2 px-4 rounded-lg font-bold btn-primary">測試 API</button>
+                            <button data-i18n="API_TEST_BTN" id="test-api-btn" class="w-full py-2 px-4 rounded-lg font-bold btn-primary">測試 API</button>
                         </div>
                     </div>
          
                 </section>
             </div>
             <footer class="mt-8 text-center text-sm text-gray-500">
-                <p>零點考勤系統 v1.0 | <span class="text-gray-400">由 <a href="https://github.com/0rigind1865-bit" class="hover:underline">0J</a> 製作 | <a href="https://buymeacoffee.com/0rigind186u" class="hover:underline">點此贊助此專案</a></span></p>
-                <p class="text-xs text-gray-400 mt-1">這是一個開源專案，歡迎貢獻。</p>
+                <p data-i18n="FOOTER_VERSION">零點考勤系統 v1.0 |
+                <span data-i18n="FOOTER_CREDITS" class="text-gray-400">由
+                    <a href="https://github.com/0rigind1865-bit" class="hover:underline">0J</a> 製作 |
+                    <a data-i18n="FOOTER_SPONSOR" href="https://buymeacoffee.com/0rigind186u" class="hover:underline">點此贊助此專案</a></span></p>
+                <p data-i18n="FOOTER_OPEN_SOURCE" class="text-xs text-gray-400 mt-1">這是一個開源專案，歡迎貢獻。</p>
             </footer>
         </div>
         <!-- 作者資訊區塊 -->
