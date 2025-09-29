@@ -15,7 +15,7 @@
   "TAB_ADMIN": "管理員",
   "PUNCH_SECTION_TITLE": "打卡專區",
   "PUNCH_SECTION_DESCRIPTION": "請點擊下方按鈕進行上班或下班打卡。",
-  "": "考勤紀錄",
+  "ABNORMAL_RECORDS_TITLE": "考勤紀錄",
   "ABNORMAL_RECORDS_DESCRIPTION": "系統會自動偵測本月異常紀錄，您可以在此進行補打卡。",
   "RECORDS_LOADING": "正在載入紀錄...",
   "RECORDS_EMPTY_TITLE": "太棒了！",
