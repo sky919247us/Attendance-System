@@ -181,7 +181,7 @@ async function checkAbnormal() {
                             <p class="font-medium text-gray-800">${record.date}</p>
                             <p class="text-sm text-red-600">${record.reason}</p>
                         </div>
-                        <button data-date="${record.date}" data-reason="${record.reason}" class="adjust-btn text-sm font-semibold text-indigo-600 hover:text-indigo-800">補打卡</button>
+                        <button data-i18n="ADJUST_BUTTON_TEXT" data-date="${record.date}" data-reason="${record.reason}" class="adjust-btn text-sm font-semibold text-indigo-600 hover:text-indigo-800">補打卡</button>
                     `;
                     abnormalList.appendChild(li);
                 });
@@ -219,7 +219,7 @@ async function renderCalendar(date) {
     } else {
         // 如果沒有，才發送 API 請求
         // 清空日曆，顯示載入狀態，並確保置中
-        calendarGrid.innerHTML = '<div class="col-span-full text-center text-gray-500 py-4">正在載入...</div>';
+        calendarGrid.innerHTML = '<div data-i18n="LOADING class="col-span-full text-center text-gray-500 py-4">正在載入...</div>';
         
         try {
             const res = await callApifetch(`getAttendanceDetails&month=${monthkey}&userId=${userId}`);
@@ -247,7 +247,7 @@ async function renderCalendar(date) {
 function renderCalendarWithData(year, month, today, records, calendarGrid, monthTitle) {
     // 確保日曆網格在每次渲染前被清空
     calendarGrid.innerHTML = '';
-    monthTitle.textContent = `${year} 年 ${month + 1} 月`;
+    monthTitle.textContent = t("MONTH_YEAR_TEMPLATE");
     
     // 取得該月第一天是星期幾
     const firstDayOfMonth = new Date(year, month, 1).getDay();
@@ -321,7 +321,7 @@ async function renderDailyRecords(dateKey) {
     const dailyRecordsEmpty = document.getElementById('daily-records-empty');
     const recordsLoading = document.getElementById("records-loading");
     
-    dailyRecordsTitle.textContent = `${dateKey} 打卡紀錄`;
+    dailyRecordsTitle.textContent = t("DAILY_RECORDS_TITLE");
     dailyRecordsList.innerHTML = '';
     dailyRecordsEmpty.style.display = 'none';
     recordsLoading.style.display = 'block';
@@ -366,12 +366,12 @@ async function renderDailyRecords(dateKey) {
                 const recordHtml = records.record.map(r => `
                     <p class="font-medium text-gray-800">${r.time} - ${r.type}</p>
                     <p class="text-sm text-gray-500">${r.location}</p>
-                    <p class="text-sm text-gray-500">備註：${r.note}</p>
+                    <p data-i18n="RECORD_NOTE_PREFIX" class="text-sm text-gray-500">備註：${r.note}</p>
                 `).join("");
                 
                 li.innerHTML = `
                     ${recordHtml}
-                    <p class="text-sm text-gray-500">系統判斷：${records.reason}</p>
+                    <p data-i18n="RECORD_REASON_PREFIX" class="text-sm text-gray-500">系統判斷：${records.reason}</p>
                 `;
                 dailyRecordsList.appendChild(li);
             });
@@ -468,8 +468,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <span class="text-xs text-gray-500">${req.applicationPeriod}</span>
                 </div>
                 <div class="flex justify-end space-x-2">
-                    <button data-index="${index}" class="approve-btn px-3 py-1 rounded-md text-sm font-bold btn-primary">核准</button>
-                    <button data-index="${index}" class="reject-btn px-3 py-1 rounded-md text-sm font-bold btn-warning">拒絕</button>
+                    <button data-i18n="ADMIN_APPROVE_BUTTON" data-index="${index}" class="approve-btn px-3 py-1 rounded-md text-sm font-bold btn-primary">核准</button>
+                    <button data-i18n="ADMIN_REJECT_BUTTON" data-index="${index}" class="reject-btn px-3 py-1 rounded-md text-sm font-bold btn-warning">拒絕</button>
                 </div>
             `;
             listEl.appendChild(li);
@@ -505,13 +505,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             const res = await callApifetch(`${endpoint}&id=${recordId}`);
             if (res.ok) {
-                showNotification(`請求已${action === 'approve' ? '核准' : '拒絕'}！`, "success");
+                // 使用 t() 函式和動態鍵值
+                const translationKey = action === 'approve' ? 'REQUEST_APPROVED' : 'REQUEST_REJECTED';
+                showNotification(t(translationKey), "success");
                 fetchAndRenderReviewRequests(); // 重新整理列表
             } else {
-                showNotification(`審核失敗：${res.msg}`, "error");
+                // 使用 t() 函式並傳入動態參數
+                showNotification(t('REVIEW_FAILED', { msg: res.msg }), "error");
             }
         } catch (err) {
-            showNotification("審核失敗，請檢查網路。", "error");
+            showNotification(t("REVIEW_NETWORK_ERROR"), "error");
             console.error(err);
         }
     }
@@ -570,7 +573,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         // 顯示載入狀態
-        mapContainer.innerHTML = '正在載入地圖...';
+        mapContainer.innerHTML = t("MAP_LOADING");
         statusEl.textContent = '正在偵測位置...';
         coordsEl.textContent = '未知';
 
@@ -794,13 +797,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         if (state === 'processing') {
             button.disabled = true;
-            button.textContent = '處理中...';
+            button.textContent = t('LOADING');
         } else {
             button.disabled = false;
             if (buttonId === 'punch-in-btn') {
-                button.textContent = t('上班打卡');
+                button.textContent = t('PUNCH_IN_LABEL');
             } else if (buttonId === 'punch-out-btn') {
-                button.textContent = t('下班打卡');
+                button.textContent = t('PUNCH_IN_LABEL');
             }
         }
     }
