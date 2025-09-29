@@ -41,8 +41,14 @@ function renderTranslations() {
     const elementsToTranslate = document.querySelectorAll('[data-i18n]');
     elementsToTranslate.forEach(element => {
         const key = element.getAttribute('data-i18n');
+        // 檢查元素是否有對應的翻譯鍵值
         if (translations[key]) {
-            element.textContent = t(key);
+            // 根據不同元素類型來設定翻譯文字
+            if (element.tagName === 'INPUT') {
+                element.placeholder = t(key);
+            } else if (element.tagName === 'BUTTON' || element.tagName === 'A' || element.tagName === 'P' || element.tagName === 'H1' || element.tagName === 'H2' || element.tagName === 'H3' || element.tagName === 'LABEL') {
+                element.textContent = t(key);
+            }
         }
     });
 }
