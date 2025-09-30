@@ -983,7 +983,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         // 取得當前顯示的標籤頁ID
         const currentTab = document.querySelector('.tab-content.active');
         const currentTabId = currentTab ? currentTab.id : null;
-        
+        console.log(currentTabId);
         // 如果當前頁面是「地圖」頁籤，則重新載入地圖
         if (currentTabId === 'location-view') {
             initLocationMap(true); // 重新載入地圖
