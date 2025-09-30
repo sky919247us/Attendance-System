@@ -602,7 +602,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const coordsEl = document.getElementById('location-coords');
         
         // 如果地圖已經存在，則直接返回
-        if (mapInstance && !forceReload) {
+        if (mapInstance && forceReload) {
             mapInstance.invalidateSize();
             return;
         }
