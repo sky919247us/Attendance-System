@@ -241,7 +241,7 @@ async function renderCalendar(date) {
         // 如果沒有，才發送 API 請求
         // 清空日曆，顯示載入狀態，並確保置中
         calendarGrid.innerHTML = '<div data-i18n="LOADING" class="col-span-full text-center text-gray-500 py-4">正在載入...</div>';
-        
+        renderTranslations(calendarGrid);
         try {
             const res = await callApifetch(`getAttendanceDetails&month=${monthkey}&userId=${userId}`);
             if (res.ok) {
