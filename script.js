@@ -600,10 +600,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         const mapContainer = document.getElementById('map-container');
         const statusEl = document.getElementById('location-status');
         const coordsEl = document.getElementById('location-coords');
-        
+        console.log(mapInstance && !forceReload);
         // 如果地圖已經存在，則直接返回
-        if (mapInstance && forceReload) {
+        if (mapInstance && !forceReload) {
             mapInstance.invalidateSize();
+            console.log("取消初始化地圖");
             return;
         }
         
