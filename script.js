@@ -226,7 +226,7 @@ async function renderCalendar(date) {
     const monthTitle = document.getElementById('month-title');
     const calendarGrid = document.getElementById('calendar-grid');
     const year = date.getFullYear();
-    const month = date.getMonth()+1;
+    const month = date.getMonth();
     const today = new Date();
     
     // 生成 monthKey
@@ -270,7 +270,7 @@ function renderCalendarWithData(year, month, today, records, calendarGrid, month
     calendarGrid.innerHTML = '';
     monthTitle.textContent = t("MONTH_YEAR_TEMPLATE", {
         year: year,
-        month: month
+        month: month+1
     });
     
     // 取得該月第一天是星期幾
