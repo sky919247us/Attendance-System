@@ -39,7 +39,7 @@ function renderTranslations(container = document) {
     if (container === document) {
         document.title = t("APP_TITLE");
     }
-
+    
     const elementsToTranslate = container.querySelectorAll('[data-i18n]');
     elementsToTranslate.forEach(element => {
         const key = element.getAttribute('data-i18n');
@@ -195,7 +195,7 @@ async function checkAbnormal() {
                     abnormalList.appendChild(li);
                     renderTranslations(li);
                 });
-            
+                
             } else {
                 abnormalRecordsSection.style.display = 'block';
                 recordsEmpty.style.display = 'block';
@@ -338,7 +338,7 @@ async function renderDailyRecords(dateKey) {
     dailyRecordsTitle.textContent = t("DAILY_RECORDS_TITLE", {
         dateKey: dateKey
     });
-
+    
     dailyRecordsList.innerHTML = '';
     dailyRecordsEmpty.style.display = 'none';
     recordsLoading.style.display = 'block';
@@ -433,7 +433,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 全域變數，用於儲存地點標記和圓形
     let locationMarkers = L.layerGroup();
     let locationCircles = L.layerGroup();
-
+    
     /**
      * 取得並渲染所有待審核的請求。
      */
@@ -469,7 +469,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             loadingEl.style.display = 'none';
         }
     }
-
+    
     /**
      * 根據資料渲染待審核列表。
      * @param {Array<Object>} requests - 請求資料陣列。
@@ -504,7 +504,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             button.addEventListener('click', (e) => handleReviewAction(e.target.dataset.index, 'reject'));
         });
     }
-
+    
     /**
      * 處理審核動作（核准或拒絕）。
      * @param {number} index - 請求在陣列中的索引。
@@ -516,10 +516,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             showNotification("找不到請求資料。", "error");
             return;
         }
-
+        
         // 直接使用後端回傳的 ID，不再自己計算
         const recordId = request.id;
-
+        
         const endpoint = action === 'approve' ? 'approveReview' : 'rejectReview';
         
         try {
@@ -548,7 +548,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             // 清除舊的地點標記和圓形
             locationMarkers.clearLayers();
             locationCircles.clearLayers();
-
+            
             if (res.ok && Array.isArray(res.locations)) {
                 // 遍歷所有地點並在地圖上放置標記和圓形
                 res.locations.forEach(loc => {
@@ -569,7 +569,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 // 將所有地點標記和圓形一次性加到地圖上
                 locationMarkers.addTo(mapInstance);
                 locationCircles.addTo(mapInstance);
-
+                
                 console.log("地點標記和範圍已成功載入地圖。");
             } else {
                 showNotification("取得地點清單失敗：" + res.msg, "error");
@@ -591,68 +591,68 @@ document.addEventListener('DOMContentLoaded', async () => {
             mapInstance.invalidateSize();
             return;
         }
-
+        
         // 顯示載入狀態
         mapContainer.innerHTML = t("MAP_LOADING");
         statusEl.textContent = t('DETECTING_LOCATION');
         coordsEl.textContent = t('UNKNOWN_LOCATION');
-
+        
         // 建立地圖
         mapInstance = L.map('map-container', {
             center: [25.0330, 121.5654], // 預設中心點為台北市
             zoom: 13
         });
-
+        
         // 加入 OpenStreetMap 圖層
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(mapInstance);
-
+        
         // 取得使用者地理位置
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const { latitude, longitude } = position.coords;
-                    currentCoords = [latitude, longitude];
-
-                    // 更新狀態顯示
-                    statusEl.textContent = t('DETECTION_SUCCESS');
-                    coordsEl.textContent = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
-                    
-                    // 設定地圖視圖
-                    mapInstance.setView(currentCoords, 18);
-
-                    // 在地圖上放置標記
-                    if (marker) mapInstance.removeLayer(marker);
-                    marker = L.marker(currentCoords).addTo(mapInstance)
-                        .bindPopup(t('CURRENT_LOCATION'))
-                        .openPopup();
-
-
-                },
-                (error) => {
-                    // 處理定位失敗
-                    statusEl.textContent = t('ERROR_GEOLOCATION_PERMISSION_DENIED');
-                    console.error("Geolocation failed:", error);
-                    
-                    let message;
-                    switch(error.code) {
-                        case error.PERMISSION_DENIED:
-                            message = t('ERROR_GEOLOCATION_PERMISSION_DENIED');
-                            break;
-                        case error.POSITION_UNAVAILABLE:
-                            message = t('ERROR_GEOLOCATION_UNAVAILABLE');
-                            break;
-                        case error.TIMEOUT:
-                            message = t('ERROR_GEOLOCATION_TIMEOUT');
-                            break;
-                        case error.UNKNOWN_ERROR:
-                            message = t('ERROR_GEOLOCATION_UNKNOWN');
-                            break;
-                    }
-                    showNotification(`定位失敗：${message}`, "error");
-                }
-            );
+                                                     (position) => {
+                                                         const { latitude, longitude } = position.coords;
+                                                         currentCoords = [latitude, longitude];
+                                                         
+                                                         // 更新狀態顯示
+                                                         statusEl.textContent = t('DETECTION_SUCCESS');
+                                                         coordsEl.textContent = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+                                                         
+                                                         // 設定地圖視圖
+                                                         mapInstance.setView(currentCoords, 18);
+                                                         
+                                                         // 在地圖上放置標記
+                                                         if (marker) mapInstance.removeLayer(marker);
+                                                         marker = L.marker(currentCoords).addTo(mapInstance)
+                                                         .bindPopup(t('CURRENT_LOCATION'))
+                                                         .openPopup();
+                                                         
+                                                         
+                                                     },
+                                                     (error) => {
+                                                         // 處理定位失敗
+                                                         statusEl.textContent = t('ERROR_GEOLOCATION_PERMISSION_DENIED');
+                                                         console.error("Geolocation failed:", error);
+                                                         
+                                                         let message;
+                                                         switch(error.code) {
+                                                             case error.PERMISSION_DENIED:
+                                                                 message = t('ERROR_GEOLOCATION_PERMISSION_DENIED');
+                                                                 break;
+                                                             case error.POSITION_UNAVAILABLE:
+                                                                 message = t('ERROR_GEOLOCATION_UNAVAILABLE');
+                                                                 break;
+                                                             case error.TIMEOUT:
+                                                                 message = t('ERROR_GEOLOCATION_TIMEOUT');
+                                                                 break;
+                                                             case error.UNKNOWN_ERROR:
+                                                                 message = t('ERROR_GEOLOCATION_UNKNOWN');
+                                                                 break;
+                                                         }
+                                                         showNotification(`定位失敗：${message}`, "error");
+                                                     }
+                                                     );
             // 成功取得使用者位置後，載入所有打卡地點
             fetchAndRenderLocationsOnMap();
         } else {
@@ -660,7 +660,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             statusEl.textContent = '不支援定位';
         }
     }
-
+    
     
     // 處理 API 測試按鈕事件
     document.getElementById('test-api-btn').addEventListener('click', async () => {
@@ -760,22 +760,30 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
     
     // 語系初始化
-    const browserLang = navigator.language || navigator.userLanguage;
-    if (browserLang.startsWith("zh")) {
-        currentLang = "zh-TW";
-    } else if (browserLang.startsWith("ja")) {
-        currentLang = "ja-JP";
-    } else if (browserLang.startsWith("vi")) {
-        currentLang = "vi";
-    } else if (browserLang.startsWith("id")) {
-        currentLang = "id";
-    } else {
-        currentLang = "en-US";
+    let currentLang = localStorage.getItem("lang"); // 先從 localStorage 讀取上次的設定
+
+    // 如果 localStorage 沒有紀錄，才根據瀏覽器設定判斷
+    if (!currentLang) {
+        const browserLang = navigator.language || navigator.userLanguage;
+        if (browserLang.startsWith("zh")) {
+            currentLang = "zh-TW";
+        } else if (browserLang.startsWith("ja")) {
+            currentLang = "ja"; // 建議使用 ja.json，所以這裡可以只用 'ja'
+        } else if (browserLang.startsWith("vi")) {
+            currentLang = "vi";
+        } else if (browserLang.startsWith("id")) {
+            currentLang = "id";
+        } else {
+            currentLang = "en-US";
+        }
     }
+    // 在這裡設定語言切換器的值
+    document.getElementById('language-switcher').value = currentLang;
+    // 將最終確定的語言存入 localStorage 並載入翻譯
     localStorage.setItem("lang", currentLang);
     await loadTranslations(currentLang);
     
-
+    
     
     const params = new URLSearchParams(window.location.search);
     const otoken = params.get('code');
@@ -956,6 +964,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('language-switcher').addEventListener('change', (e) => {
         const newLang = e.target.value;
         loadTranslations(newLang);
+        // 取得當前顯示的標籤頁ID
+        const currentTab = document.querySelector('.tab-content.active');
+        const currentTabId = currentTab ? currentTab.id : null;
+        
+        // 如果當前頁面是「地圖」頁籤，則重新載入地圖
+        if (currentTabId === 'location-view') {
+            initLocationMap(); // 重新載入地圖
+        }
     });
     // 點擊日曆日期的事件監聽器
     calendarGrid.addEventListener('click', (e) => {
