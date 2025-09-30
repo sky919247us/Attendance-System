@@ -28,8 +28,16 @@ async function loadTranslations(lang) {
 // 翻譯函式
 function t(code, params = {}) {
     let text = translations[code] || code;
+
+    // 檢查並替換參數中的變數
     for (const key in params) {
-        text = text.replace(`{${key}}`, params[key]);
+        // 在替換之前，先翻譯參數的值
+        let paramValue = params[key];
+        if (paramValue in translations) {
+            paramValue = translations[paramValue];
+        }
+        
+        text = text.replace(`{${key}}`, paramValue);
     }
     return text;
 }
