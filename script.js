@@ -997,7 +997,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const newLang = e.target.value;
         loadTranslations(newLang);
         // 取得當前顯示的標籤頁ID
-        const currentTab = document.querySelector('.tab-content.active');
+        const currentTab = document.querySelector('.active');
         const currentTabId = currentTab ? currentTab.id : null;
         console.log(currentTabId);
         // 如果當前頁面是「地圖」頁籤，則重新載入地圖
