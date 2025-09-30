@@ -226,7 +226,7 @@ async function renderCalendar(date) {
     const monthTitle = document.getElementById('month-title');
     const calendarGrid = document.getElementById('calendar-grid');
     const year = date.getFullYear();
-    const month = date.getMonth();
+    const month = date.getMonth()+1;
     const today = new Date();
     
     // 生成 monthKey
