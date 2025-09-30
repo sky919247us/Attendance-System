@@ -621,7 +621,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         
 
         // 顯示載入中的文字
-        mapLoadingText.style.display = 'flex'; // 或 'block'，根據你的樣式決定
+        mapLoadingText.style.display = 'block'; // 或 'block'，根據你的樣式決定
 
         // 建立地圖
         mapInstance = L.map('map-container', {
