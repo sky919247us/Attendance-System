@@ -380,11 +380,16 @@ async function renderDailyRecords(dateKey) {
             dailyRecords.forEach(records => {
                 const li = document.createElement('li');
                 li.className = 'p-3 bg-gray-50 rounded-lg';
-                const recordHtml = records.record.map(r => `
-                    <p class="font-medium text-gray-800">${r.time} - ${r.type}</p>
-                    <p class="text-sm text-gray-500">${r.location}</p>
-                    <p data-i18n="RECORD_NOTE_PREFIX" class="text-sm text-gray-500">備註：${r.note}</p>
-                `).join("");
+                const recordHtml = records.record.map(r => {
+                    // 根據 r.type 的值來選擇正確的翻譯鍵值
+                    const typeKey = r.type === '上班' ? 'PUNCH_IN' : 'PUNCH_OUT';
+
+                    return `
+                        <p class="font-medium text-gray-800">${r.time} - ${t(typeKey)}</p>
+                        <p class="text-sm text-gray-500">${r.location}</p>
+                        <p data-i18n="RECORD_NOTE_PREFIX" class="text-sm text-gray-500">備註：${r.note}</p>
+                    `;
+                }).join("");
                 
                 li.innerHTML = `
                     ${recordHtml}
