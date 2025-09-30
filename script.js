@@ -754,23 +754,39 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
     // UI切換邏輯
     const switchTab = (tabId) => {
-        const tabs = ['dashboard-view', 'monthly-view', 'location-view','admin-view'];
-        const btns = ['tab-dashboard-btn', 'tab-monthly-btn', 'tab-location-btn','tab-admin-btn'];
+        const tabs = ['dashboard-view', 'monthly-view', 'location-view', 'admin-view'];
+        const btns = ['tab-dashboard-btn', 'tab-monthly-btn', 'tab-location-btn', 'tab-admin-btn'];
+
+        // 1. 移除舊的 active 類別和 CSS 屬性
+        tabs.forEach(id => {
+            const tabElement = document.getElementById(id);
+            tabElement.style.display = 'none'; // 隱藏內容
+            tabElement.classList.remove('active'); // 移除 active 類別
+        });
         
-        tabs.forEach(id => document.getElementById(id).style.display = 'none');
-        btns.forEach(id => document.getElementById(id).classList.replace('bg-indigo-600', 'bg-gray-200'));
-        btns.forEach(id => document.getElementById(id).classList.replace('text-white', 'text-gray-600'));
-        
-        document.getElementById(tabId).style.display = 'block';
-        document.getElementById(`tab-${tabId.replace('-view', '-btn')}`).classList.replace('bg-gray-200', 'bg-indigo-600');
-        document.getElementById(`tab-${tabId.replace('-view', '-btn')}`).classList.replace('text-gray-600', 'text-white');
-        
-        // 如果切換到月份檢視，渲染日曆
+        // 2. 移除按鈕的選中狀態
+        btns.forEach(id => {
+            const btnElement = document.getElementById(id);
+            btnElement.classList.replace('bg-indigo-600', 'bg-gray-200');
+            btnElement.classList.replace('text-white', 'text-gray-600');
+        });
+
+        // 3. 顯示新頁籤並新增 active 類別
+        const newTabElement = document.getElementById(tabId);
+        newTabElement.style.display = 'block'; // 顯示內容
+        newTabElement.classList.add('active'); // 新增 active 類別
+
+        // 4. 設定新頁籤按鈕的選中狀態
+        const newBtnElement = document.getElementById(`tab-${tabId.replace('-view', '-btn')}`);
+        newBtnElement.classList.replace('bg-gray-200', 'bg-indigo-600');
+        newBtnElement.classList.replace('text-gray-600', 'text-white');
+
+        // 5. 根據頁籤 ID 執行特定動作
         if (tabId === 'monthly-view') {
             renderCalendar(currentMonthDate);
-        }else if (tabId === 'location-view') {
-            initLocationMap(); // <-- 這裡改為呼叫新的地圖初始化函式
-        }else if (tabId === 'admin-view') {
+        } else if (tabId === 'location-view') {
+            initLocationMap(); // <-- 這行保持不變
+        } else if (tabId === 'admin-view') {
             fetchAndRenderReviewRequests();
         }
     };
