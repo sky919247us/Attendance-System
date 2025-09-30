@@ -601,11 +601,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         const statusEl = document.getElementById('location-status');
         const coordsEl = document.getElementById('location-coords');
         console.log(mapInstance && !forceReload);
-        // 如果地圖已經存在，則直接返回
-        if (mapInstance && !forceReload) {
-            mapInstance.invalidateSize();
-            console.log("取消初始化地圖");
-            return;
+        // 檢查地圖實例是否已存在
+        if (mapInstance) {
+            // 如果已經存在，並且沒有被要求強制重新載入，則直接返回
+            if (!forceReload) {
+                mapInstance.invalidateSize();
+                return;
+            }
+            
+            // 如果被要求強制重新載入，則先徹底銷毀舊的地圖實例
+            mapInstance.remove();
+            mapInstance = null;
         }
         
         // 顯示載入狀態
