@@ -615,9 +615,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         
         // 顯示載入狀態
-        mapContainer.innerHTML = t("MAP_LOADING");
+        //mapContainer.innerHTML = t("MAP_LOADING");
         statusEl.textContent = t('DETECTING_LOCATION');
         coordsEl.textContent = t('UNKNOWN_LOCATION');
+        // 顯示載入中的文字
+        mapLoadingText.style.display = 'flex'; // 或 'block'，根據你的樣式決定
         
         // 建立地圖
         mapInstance = L.map('map-container', {
