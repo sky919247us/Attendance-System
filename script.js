@@ -439,6 +439,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // 全域變數，用於儲存地圖實例
     let mapInstance = null;
+    let mapLoadingText = null;
     let currentCoords = null;
     let marker = null;
     let circle = null;
@@ -601,6 +602,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         const statusEl = document.getElementById('location-status');
         const coordsEl = document.getElementById('location-coords');
         console.log(mapInstance && !forceReload);
+        // 取得載入文字元素
+         if (!mapLoadingText) {
+             mapLoadingText = document.getElementById('map-loading-text');
+         }
         // 檢查地圖實例是否已存在
         if (mapInstance) {
             // 如果已經存在，並且沒有被要求強制重新載入，則直接返回
@@ -614,13 +619,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             mapInstance = null;
         }
         
-        // 顯示載入狀態
-        //mapContainer.innerHTML = t("MAP_LOADING");
-        statusEl.textContent = t('DETECTING_LOCATION');
-        coordsEl.textContent = t('UNKNOWN_LOCATION');
+
         // 顯示載入中的文字
         mapLoadingText.style.display = 'flex'; // 或 'block'，根據你的樣式決定
-        
+
         // 建立地圖
         mapInstance = L.map('map-container', {
             center: [25.0330, 121.5654], // 預設中心點為台北市
@@ -631,6 +633,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(mapInstance);
+        
+        // 讓地圖在完成載入後隱藏載入中的文字
+            mapInstance.whenReady(() => {
+              mapLoadingText.style.display = 'none';
+              // 確保地圖的尺寸正確
+              mapInstance.invalidateSize();
+            });
+        
+        // 顯示載入狀態
+        //mapContainer.innerHTML = t("MAP_LOADING");
+        statusEl.textContent = t('DETECTING_LOCATION');
+        coordsEl.textContent = t('UNKNOWN_LOCATION');
         
         // 取得使用者地理位置
         if (navigator.geolocation) {
