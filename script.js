@@ -44,7 +44,9 @@ function renderTranslations(container = document) {
     elementsToTranslate.forEach(element => {
         const key = element.getAttribute('data-i18n');
         const translatedText = t(key);
-        if (translatedText) {
+
+        // 檢查翻譯結果是否為空字串，或是否回傳了原始鍵值
+        if (translatedText !== key) {
             if (element.tagName === 'INPUT') {
                 element.placeholder = translatedText;
             } else {
