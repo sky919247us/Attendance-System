@@ -596,13 +596,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
     // 初始化地圖並取得使用者位置
-    function initLocationMap() {
+    function initLocationMap(forceReload = false){
         const mapContainer = document.getElementById('map-container');
         const statusEl = document.getElementById('location-status');
         const coordsEl = document.getElementById('location-coords');
         
         // 如果地圖已經存在，則直接返回
-        if (mapInstance) {
+        if (mapInstance && !forceReload) {
             mapInstance.invalidateSize();
             return;
         }
@@ -985,7 +985,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         // 如果當前頁面是「地圖」頁籤，則重新載入地圖
         if (currentTabId === 'location-view') {
-            initLocationMap(); // 重新載入地圖
+            initLocationMap(true); // 重新載入地圖
         }
     });
     // 點擊日曆日期的事件監聽器
