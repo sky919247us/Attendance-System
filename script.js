@@ -7,7 +7,6 @@ let translations = {};
 let monthDataCache = {}; // 新增：用於快取月份打卡資料
 let isApiCalled = false; // 新增：用於追蹤 API 呼叫狀態，避免重複呼叫
 let userId = localStorage.getItem("sessionUserId");
-let Permissions="";
 
 // 載入語系檔
 async function loadTranslations(lang) {
@@ -132,7 +131,6 @@ async function ensureLogin() {
                 if (res.ok) {
                     if(res.user.dept==="管理員")
                     {
-                        Permissions="admin"
                         console.log(res.user.dept);
                         document.getElementById('tab-admin-btn').style.display = 'block';
                     }
@@ -1009,7 +1007,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     tabLocationBtn.addEventListener('click', () => switchTab('location-view'));
     tabMonthlyBtn.addEventListener('click', () => switchTab('monthly-view'));
     tabAdminBtn.addEventListener('click', () => {
-        if (Permissions==="admin") {
+        const res = await callApifetch("checkSession");
+        if(res.user.dept==="管理員") {
             // 如果是管理員，才執行頁籤切換
             switchTab('admin-view');
         } else {
