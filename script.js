@@ -1006,13 +1006,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     tabLocationBtn.addEventListener('click', () => switchTab('location-view'));
     tabMonthlyBtn.addEventListener('click', () => switchTab('monthly-view'));
-    tabAdminBtn.addEventListener('click', () => {
+    tabAdminBtn.addEventListener('click', async () => { // 👈 在這裡加上 async
+        // 呼叫 API 檢查 Session 和權限
         const res = await callApifetch("checkSession");
-        if(res.user.dept==="管理員") {
-            // 如果是管理員，才執行頁籤切換
+
+        // 檢查回傳的結果和權限
+        if (res.ok && res.user && res.user.dept === "管理員") {
+            // 如果 Session 有效且是管理員，執行頁籤切換
             switchTab('admin-view');
         } else {
-            // 如果不是管理員，可以給予錯誤提示
+            // 如果權限不足或 Session 無效，給予錯誤提示
+            // 這裡使用 res.msg 或 t("ERR_NO_PERMISSION") 取決於你的 showNotification 設計
             showNotification(t("ERR_NO_PERMISSION"), "error");
         }
     });
