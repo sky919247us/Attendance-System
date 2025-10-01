@@ -1009,7 +1009,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     tabLocationBtn.addEventListener('click', () => switchTab('location-view'));
     tabMonthlyBtn.addEventListener('click', () => switchTab('monthly-view'));
     tabAdminBtn.addEventListener('click', () => {
-        if (Permissions="admin") {
+        if (Permissions==="admin") {
             // 如果是管理員，才執行頁籤切換
             switchTab('admin-view');
         } else {
