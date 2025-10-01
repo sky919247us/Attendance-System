@@ -7,7 +7,7 @@ let translations = {};
 let monthDataCache = {}; // 新增：用於快取月份打卡資料
 let isApiCalled = false; // 新增：用於追蹤 API 呼叫狀態，避免重複呼叫
 let userId = localStorage.getItem("sessionUserId");
-
+let Permissions="";
 
 // 載入語系檔
 async function loadTranslations(lang) {
@@ -47,7 +47,6 @@ function renderTranslations(container = document) {
     if (container === document) {
         document.title = t("APP_TITLE");
     }
-    
     const elementsToTranslate = container.querySelectorAll('[data-i18n]');
     elementsToTranslate.forEach(element => {
         const key = element.getAttribute('data-i18n');
@@ -131,6 +130,12 @@ async function ensureLogin() {
                 const res = await callApifetch("checkSession");
                 res.msg = t(res.code);
                 if (res.ok) {
+                    if(res.user.dept==="管理員")
+                    {
+                        Permissions="admin"
+                        console.log(res.user.dept);
+                        document.getElementById('tab-admin-btn').style.display = 'block';
+                    }
                     document.getElementById("user-name").textContent = res.user.name;
                     document.getElementById("profile-img").src = res.user.picture || res.user.rate;
                     
@@ -1003,7 +1008,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     tabLocationBtn.addEventListener('click', () => switchTab('location-view'));
     tabMonthlyBtn.addEventListener('click', () => switchTab('monthly-view'));
-    tabAdminBtn.addEventListener('click', () => switchTab('admin-view'));
+    tabAdminBtn.addEventListener('click', () => {
+        if (Permissions="admin") {
+            // 如果是管理員，才執行頁籤切換
+            switchTab('admin-view');
+        } else {
+            // 如果不是管理員，可以給予錯誤提示
+            showNotification(t("ERR_NO_PERMISSION"), "error");
+        }
+    });
     // 月曆按鈕事件
     document.getElementById('prev-month').addEventListener('click', () => {
         currentMonthDate.setMonth(currentMonthDate.getMonth() - 1);
