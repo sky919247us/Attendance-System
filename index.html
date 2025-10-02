@@ -116,7 +116,10 @@
                 <!-- Dashboard View -->
                 <main id="dashboard-view" class="space-y-6">
                     <div class="card p-6">
-                        <h2 data-i18n="PUNCH_SECTION_TITLE" class="text-xl font-bold text-gray-800 mb-1">打卡專區</h2>
+                        <h2 data-i18n="PUNCH_SECTION_TITLE"
+                            class="text-xl font-bold text-gray-800 dark:text-white mb-1">
+                            打卡專區
+                        </h2>
                         <p  data-i18n="PUNCH_SECTION_DESCRIPTION" lass="text-gray-500 mb-4">請點擊下方按鈕進行上班或下班打卡。</p>
                         <div id="punch-actions" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <button id="punch-in-btn" data-i18n="PUNCH_IN_LABEL"
@@ -126,7 +129,7 @@
                     </div>
                     
                     <div id="abnormal-records-section" class="card p-6" style="display: none;">
-                        <h2 data-i18n="ABNORMAL_RECORDS_TITLE" class="text-xl font-bold text-gray-800 mb-1">考勤紀錄</h2>
+                        <h2 data-i18n="ABNORMAL_RECORDS_TITLE" class="text-xl font-bold text-gray-800 mb-1  dark:text-white mb-1">考勤紀錄</h2>
                         <p data-i18n="ABNORMAL_RECORDS_DESCRIPTION" class="text-gray-500 mb-4">系統會自動偵測本月異常紀錄，您可以在此進行補打卡。</p>
                         <div id="abnormal-records-container">
                             <div id="records-loading" data-i18n="RECORDS_LOADING" class="text-center text-gray-500 py-4">正在載入紀錄...</div>
@@ -172,7 +175,7 @@
                 <!-- Location View -->
                 <section id="location-view" class="space-y-6" style="display: none;">
                     <div class="card p-6">
-                        <h2 data-i18n="CURRENT_LOCATION_TITLE" class="text-xl font-bold text-gray-800 mb-1">當前位置</h2>
+                        <h2 data-i18n="CURRENT_LOCATION_TITLE" class="text-xl font-bold text-gray-800 mb-1"  dark:text-white mb-1>當前位置</h2>
                         <p data-i18n="CURRENT_LOCATION_DESCRIPTION" class="text-gray-500 mb-4">系統將透過 GPS 偵測您的位置。</p>
                         
                         <div id="map-container" class="w-full h-64 rounded-lg mb-4 bg-gray-200 flex items-center justify-center text-gray-500">
@@ -196,7 +199,7 @@
                 <!-- Admin View -->
                 <section id="admin-view" class="space-y-6" style="display: none;">
                     <div class="card p-6">
-                        <h2 data-i18n="PENDING_REQUESTS_TITLE" class="text-xl font-bold text-gray-800 mb-1">待審核請求</h2>
+                        <h2 data-i18n="PENDING_REQUESTS_TITLE" class="text-xl font-bold text-gray-800 mb-1  dark:text-white mb-1">待審核請求</h2>
                         <p data-i18n="PENDING_REQUESTS_DESCRIPTION" class="text-gray-500 mb-4">請處理員工提出的補打卡或虛擬卡請求。</p>
                         <div id="pending-requests-container">
                             <div id="requests-loading" data-i18n="REQUESTS_LOADING" class="text-center text-gray-500 py-4">正在載入請求...</div>
@@ -209,7 +212,7 @@
                         </div>
                     </div>
                     <div class="card p-6 mt-6">
-                        <h2 data-i18n="ADD_LOCATION_TITLE" class="text-xl font-bold text-gray-800 mb-2">新增打卡地點</h2>
+                        <h2 data-i18n="ADD_LOCATION_TITLE" class="text-xl font-bold text-gray-800 mb-2  dark:text-white mb-1">新增打卡地點</h2>
                         <p data-i18n="ADD_LOCATION_DESCRIPTION" class="text-gray-500 mb-4">輸入地點名稱，並使用您的當前位置作為經緯度。</p>
                         <div class="space-y-4">
                             <div>
@@ -228,7 +231,7 @@
                         </div>
                     </div>
                     <div class="card p-6 mt-6">
-                        <h2 data-i18n="API_TEST_TITLE" class="text-xl font-bold text-gray-800 mb-2">API 測試區</h2>
+                        <h2 data-i18n="API_TEST_TITLE" class="text-xl font-bold text-gray-800 mb-2  dark:text-white mb-1">API 測試區</h2>
                         <p data-i18n="API_TEST_DESCRIPTION" class="text-gray-500 mb-4">點擊下方按鈕以測試新的 API 功能。</p>
                         <div>
                             <button data-i18n="API_TEST_BTN" id="test-api-btn" class="w-full py-2 px-4 rounded-lg font-bold btn-primary">測試 API</button>
