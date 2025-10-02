@@ -5,14 +5,53 @@
             <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
                 <title data-i18n="APP_TITLE">APP_TITLE</title>
                 <script src="https://cdn.tailwindcss.com"></script>
+                <script>
+                    // 💡 啟用 'class' 模式的暗黑模式，這是切換開關的關鍵
+                    tailwind.config = {
+                        darkMode: 'class',
+                        theme: {
+                            extend: {
+                                // 這裡可以放您的自訂主題，但對於暗黑模式不是必須的
+                            }
+                        }
+                    }
+                    // 💡 實際的切換邏輯
+                    document.addEventListener('DOMContentLoaded', () => {
+                        const toggleButton = document.getElementById('theme-toggle');
+                        const htmlElement = document.documentElement; // 指向 <html> 標籤
+                        
+                        // --- 1. 載入保存的主題 ---
+                        // 檢查 localStorage 中是否有保存的主題偏好
+                        const savedTheme = localStorage.getItem('theme');
+                        if (savedTheme === 'dark') {
+                            htmlElement.classList.add('dark');
+                        } else {
+                            // 如果沒有保存或保存為 'light'，確保 'dark' class 被移除
+                            htmlElement.classList.remove('dark');
+                        }
+
+                        // --- 2. 處理點擊事件 ---
+                        toggleButton.addEventListener('click', () => {
+                            // 切換 <html> 標籤上的 'dark' class
+                            htmlElement.classList.toggle('dark');
+                            
+                            // 將新的主題偏好保存到 localStorage
+                            if (htmlElement.classList.contains('dark')) {
+                                localStorage.setItem('theme', 'dark');
+                            } else {
+                                localStorage.setItem('theme', 'light');
+                            }
+                        });
+                    });
+                </script>
                 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
                     <link rel="stylesheet" href="style.css">
                         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-                            integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-                            crossorigin=""/>
-                            <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-                                integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-                                crossorigin=""></script>
+                        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+                        crossorigin=""/>
+                        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+                            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+                            crossorigin=""></script>
                     </head>
     <body class="flex items-center justify-center min-h-screen p-4">
         <div id="app-container" class="w-full max-w-md mx-auto">
@@ -26,12 +65,16 @@
                         </div>
                 </div>
                 <select id="language-switcher" class="text-sm font-medium text-gray-600 rounded-md p-1">
-                            <option value="zh-TW">繁體中文</option>
-                            <option value="en-US">English</option>
-                            <option value="id">Bahasa Indonesia</option>
-                            <option value="vi">Tiếng Việt</option>
-                            <option value="ja">日本語</option>
-                            </select>
+                    <option value="zh-TW">繁體中文</option>
+                    <option value="en-US">English</option>
+                    <option value="id">Bahasa Indonesia</option>
+                    <option value="vi">Tiếng Việt</option>
+                    <option value="ja">日本語</option>
+                </select>
+                <button id="theme-toggle"
+                    class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200">
+                    🌙 切換主題
+                </button>
                 <button id="logout-btn" data-i18n="BTN_LOGOUT" class="text-sm font-medium text-gray-600 hover:text-indigo-600">登出</button>
             </header>
             
@@ -116,10 +159,10 @@
                     <div class="card p-6">
                         <h2 data-i18n="CURRENT_LOCATION_TITLE" class="text-xl font-bold text-gray-800 mb-1">當前位置</h2>
                         <p data-i18n="CURRENT_LOCATION_DESCRIPTION" class="text-gray-500 mb-4">系統將透過 GPS 偵測您的位置。</p>
-
+                        
                         <div id="map-container" class="w-full h-64 rounded-lg mb-4 bg-gray-200 flex items-center justify-center text-gray-500">
                             <div id="map-loading-text">
-                              <span data-i18n="MAP_LOADING">正在載入地圖...</span>
+                                <span data-i18n="MAP_LOADING">正在載入地圖...</span>
                             </div>
                         </div>
                         <div class="bg-gray-50 p-4 rounded-lg">
@@ -163,7 +206,7 @@
                                 <div class="mt-1 flex space-x-2">
                                     <input type="text" id="location-lat" placeholder="緯度" readonly class="block w-1/2 rounded-md border-gray-300 bg-gray-100 shadow-sm sm:text-sm">
                                         <input type="text" id="location-lng" placeholder="經度" readonly class="block w-1/2 rounded-md border-gray-300 bg-gray-100 shadow-sm sm:text-sm">
-                                </div>
+                                        </div>
                             </div>
                             <button data-i18n="GET_LOCATION_BTN" id="get-location-btn" class="w-full py-2 px-4 rounded-lg font-bold btn-secondary">取得當前位置</button>
                             <button data-i18n="ADD_LOCATION_BTN" id="add-location-btn" class="w-full py-2 px-4 rounded-lg font-bold btn-primary" disabled>新增地點</button>
@@ -176,21 +219,21 @@
                             <button data-i18n="API_TEST_BTN" id="test-api-btn" class="w-full py-2 px-4 rounded-lg font-bold btn-primary">測試 API</button>
                         </div>
                     </div>
-         
+                    
                 </section>
             </div>
             <footer class="mt-8 text-center text-sm text-gray-500">
                 <p>
-                    <span data-i18n="APP_TITLE">零點考勤系統</span> v1.0 |
-                    <span class="text-gray-400">
-                        <span data-i18n="FOOTER_CREDITS_PREFIX">由</span>
-                        <a href="https://github.com/0rigind1865-bit" class="hover:underline">0J</a>
-                        <span data-i18n="FOOTER_CREDITS_SUFFIX">製作</span> |
-                        <a data-i18n="FOOTER_SPONSOR" href="https://buymeacoffee.com/0rigind186u" class="hover:underline">點此贊助此專案</a>
-                    </span>
+                <span data-i18n="APP_TITLE">零點考勤系統</span> v1.0 |
+                <span class="text-gray-400">
+                    <span data-i18n="FOOTER_CREDITS_PREFIX">由</span>
+                    <a href="https://github.com/0rigind1865-bit" class="hover:underline">0J</a>
+                    <span data-i18n="FOOTER_CREDITS_SUFFIX">製作</span> |
+                    <a data-i18n="FOOTER_SPONSOR" href="https://buymeacoffee.com/0rigind186u" class="hover:underline">點此贊助此專案</a>
+                </span>
                 </p>
                 <p class="text-xs text-gray-400 mt-1">
-                    <span data-i18n="FOOTER_OPEN_SOURCE">這是一個開源專案，歡迎貢獻。</span>
+                <span data-i18n="FOOTER_OPEN_SOURCE">這是一個開源專案，歡迎貢獻。</span>
                 </p>
             </footer>
         </div>
