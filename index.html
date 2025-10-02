@@ -15,20 +15,32 @@
                             }
                         }
                     }
-                    // 💡 實際的切換邏輯
                     document.addEventListener('DOMContentLoaded', () => {
                         const toggleButton = document.getElementById('theme-toggle');
                         const htmlElement = document.documentElement; // 指向 <html> 標籤
+                        const themeIcon = document.getElementById('theme-icon'); // 取得圖標的元素
+
+                        // --- 核心函式：根據主題更新圖標 ---
+                        function updateThemeIcon() {
+                            if (htmlElement.classList.contains('dark')) {
+                                // 如果是暗黑模式，顯示太陽符號，暗示可以切換到亮色模式
+                                themeIcon.textContent = '☀️';
+                            } else {
+                                // 如果是亮色模式，顯示月亮符號，暗示可以切換到暗黑模式
+                                themeIcon.textContent = '🌙';
+                            }
+                        }
                         
                         // --- 1. 載入保存的主題 ---
-                        // 檢查 localStorage 中是否有保存的主題偏好
                         const savedTheme = localStorage.getItem('theme');
                         if (savedTheme === 'dark') {
                             htmlElement.classList.add('dark');
                         } else {
-                            // 如果沒有保存或保存為 'light'，確保 'dark' class 被移除
                             htmlElement.classList.remove('dark');
                         }
+
+                        // 💡 載入後立即更新圖標狀態
+                        updateThemeIcon();
 
                         // --- 2. 處理點擊事件 ---
                         toggleButton.addEventListener('click', () => {
@@ -41,6 +53,9 @@
                             } else {
                                 localStorage.setItem('theme', 'light');
                             }
+
+                            // 💡 點擊後更新圖標狀態
+                            updateThemeIcon();
                         });
                     });
                 </script>
@@ -71,11 +86,11 @@
                     <option value="vi">Tiếng Việt</option>
                     <option value="ja">日本語</option>
                 </select>
+ 
+                <button id="logout-btn" data-i18n="BTN_LOGOUT" class="text-sm font-medium text-gray-600 hover:text-indigo-600">登出</button>
                 <button id="theme-toggle"
                     class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200">
-                    🌙 切換主題
-                </button>
-                <button id="logout-btn" data-i18n="BTN_LOGOUT" class="text-sm font-medium text-gray-600 hover:text-indigo-600">登出</button>
+                    <span id="theme-icon">🌙</span> </button>
             </header>
             
             <!-- Login Section -->
