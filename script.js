@@ -504,9 +504,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             const li = document.createElement('li');
             li.className = 'p-4 bg-gray-50 rounded-lg shadow-sm flex flex-col space-y-2';
             li.innerHTML = `
-                <div class="flex items-center justify-between">
-                    <p class="text-sm font-semibold text-gray-800">${req.name} - ${req.remark}</p>
-                    <span class="text-xs text-gray-500">${req.applicationPeriod}</span>
+                <div class="flex items-center justify-between dark:bg-gray-700">
+                    <p class="text-sm font-semibold text-gray-800 dark:text-white">${req.name} - ${req.remark}</p>
+                    <span class="text-xs text-gray-500 ">${req.applicationPeriod}</span>
                 </div>
                 <div class="flex justify-end space-x-2">
                     <button data-i18n="ADMIN_APPROVE_BUTTON" data-index="${index}" class="approve-btn px-3 py-1 rounded-md text-sm font-bold btn-primary">核准</button>
@@ -934,10 +934,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             const date = e.target.dataset.date;
             const reason = e.target.dataset.reason;
             const formHtml = `
-                <div class="p-4 border-t border-gray-200 fade-in">
-                    <p data-i18n="ADJUST_BUTTON_TEXT" class="font-semibold mb-2">補打卡：<span class="text-indigo-600">${date}</span></p>
-                    <div class="form-group mb-3">
-                        <label for="adjustDateTime" data-i18n="SELECT_DATETIME_LABEL" class="block text-sm font-medium text-gray-700 mb-1">選擇日期與時間：</label>
+                <div class="p-4 border-t border-gray-200 fade-in dark:bg-gray-700">
+                    <p data-i18n="ADJUST_BUTTON_TEXT" class="font-semibold mb-2">補打卡：<span class="text-indigo-600 dark:text-white">${date}</span></p>
+                    <div class="form-group mb-3 dark:bg-gray-700">
+                        <label for="adjustDateTime" data-i18n="SELECT_DATETIME_LABEL" class="block text-sm font-medium text-gray-700 mb-1 dark:bg-gray-300">選擇日期與時間：</label>
                         <input id="adjustDateTime" type="datetime-local" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
