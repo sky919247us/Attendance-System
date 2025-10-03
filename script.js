@@ -201,9 +201,14 @@ async function checkAbnormal() {
                     li.innerHTML = `
                         <div>
                             <p class="font-medium text-gray-800 dark:text-white">${record.date}</p>
-                            <p class="text-sm text-red-600">${record.reason}</p>
+                            <p class="text-sm text-red-600 dark:text-red-400">${record.reason}</p>
                         </div>
-                        <button data-i18n="ADJUST_BUTTON_TEXT" data-date="${record.date}" data-reason="${record.reason}" class="adjust-btn text-sm font-semibold text-indigo-600 hover:text-indigo-800">補打卡</button>
+                    <button data-i18n="ADJUST_BUTTON_TEXT" data-date="${record.date}" data-reason="${record.reason}" 
+                            class="adjust-btn text-sm font-semibold 
+                                   text-indigo-600 dark:text-indigo-400 
+                                   hover:text-indigo-800 dark:hover:text-indigo-300">
+                        補打卡
+                    </button>
                     `;
                     abnormalList.appendChild(li);
                     renderTranslations(li);
