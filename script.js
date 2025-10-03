@@ -392,21 +392,21 @@ async function renderDailyRecords(dateKey) {
             dailyRecordsEmpty.style.display = 'none';
             dailyRecords.forEach(records => {
                 const li = document.createElement('li');
-                li.className = 'p-3 bg-gray-50 rounded-lg';
+                li.className = 'p-3 bg-gray-50 dark:bg-gray-800 rounded-lg';
                 const recordHtml = records.record.map(r => {
                     // 根據 r.type 的值來選擇正確的翻譯鍵值
                     const typeKey = r.type === '上班' ? 'PUNCH_IN' : 'PUNCH_OUT';
 
                     return `
-                        <p class="font-medium text-gray-800">${r.time} - ${t(typeKey)}</p>
-                        <p class="text-sm text-gray-500">${r.location}</p>
-                        <p data-i18n="RECORD_NOTE_PREFIX" class="text-sm text-gray-500">備註：${r.note}</p>
+                        <p class="font-medium text-gray-800 dark:text-white">${r.time} - ${t(typeKey)}</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">${r.location}</p>
+                        <p data-i18n="RECORD_NOTE_PREFIX" class="text-sm text-gray-500 dark:text-gray-400">備註：${r.note}</p>
                     `;
                 }).join("");
                 
                 li.innerHTML = `
                     ${recordHtml}
-                    <p data-i18n="RECORD_REASON_PREFIX" class="text-sm text-gray-500">系統判斷：${records.reason}</p>
+                    <p data-i18n="RECORD_REASON_PREFIX" class="text-sm text-gray-500 dark:text-gray-400">系統判斷：${records.reason}</p>
                 `;
                 dailyRecordsList.appendChild(li);
                 renderTranslations(li);
