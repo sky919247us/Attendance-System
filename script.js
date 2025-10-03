@@ -406,7 +406,7 @@ async function renderDailyRecords(dateKey) {
                 
                 li.innerHTML = `
                     ${recordHtml}
-                    <p data-i18n="RECORD_REASON_PREFIX" class="text-sm text-gray-500 dark:text-gray-400">系統判斷：${r.records.reason}</p>
+                    <p data-i18n="RECORD_REASON_PREFIX" class="text-sm text-gray-500 dark:text-gray-400">系統判斷：${records.reason}</p>
                 `;
                 dailyRecordsList.appendChild(li);
                 renderTranslations(li);
