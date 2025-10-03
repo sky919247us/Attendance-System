@@ -937,8 +937,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <div class="p-4 border-t border-gray-200 fade-in ">
                     <p data-i18n="ADJUST_BUTTON_TEXT" class="font-semibold mb-2">補打卡：<span class="text-indigo-600">${date}</span></p>
                     <div class="form-group mb-3">
-                        <label for="adjustDateTime" data-i18n="SELECT_DATETIME_LABEL" class="block text-sm font-medium text-gray-700 mb-1">選擇日期與時間：</label>
-                        <input id="adjustDateTime" type="datetime-local" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        <label for="adjustDateTime" data-i18n="SELECT_DATETIME_LABEL" class="block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300">選擇日期與時間：</label>
+            <input id="adjustDateTime" 
+                   type="datetime-local" 
+                   class="w-full p-2 
+                          border border-gray-300 dark:border-gray-600 
+                          rounded-md shadow-sm 
+                          dark:bg-gray-700 dark:text-white
+                          focus:ring-indigo-500 focus:border-indigo-500">
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <button data-type="in" data-i18n="BTN_ADJUST_IN" class="submit-adjust-btn w-full py-2 px-4 rounded-lg font-bold btn-secondary">補上班卡</button>
