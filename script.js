@@ -27,7 +27,7 @@ async function loadTranslations(lang) {
 // 翻譯函式
 function t(code, params = {}) {
     let text = translations[code] || code;
-
+    
     // 檢查並替換參數中的變數
     for (const key in params) {
         // 在替換之前，先翻譯參數的值
@@ -50,7 +50,7 @@ function renderTranslations(container = document) {
     elementsToTranslate.forEach(element => {
         const key = element.getAttribute('data-i18n');
         const translatedText = t(key);
-
+        
         // 檢查翻譯結果是否為空字串，或是否回傳了原始鍵值
         if (translatedText !== key) {
             if (element.tagName === 'INPUT') {
@@ -396,7 +396,7 @@ async function renderDailyRecords(dateKey) {
                 const recordHtml = records.record.map(r => {
                     // 根據 r.type 的值來選擇正確的翻譯鍵值
                     const typeKey = r.type === '上班' ? 'PUNCH_IN' : 'PUNCH_OUT';
-
+                    
                     return `
                         <p class="font-medium text-gray-800 dark:text-white">${r.time} - ${t(typeKey)}</p>
                         <p class="text-sm text-gray-500 dark:text-gray-400">${r.location}</p>
@@ -405,9 +405,12 @@ async function renderDailyRecords(dateKey) {
                 }).join("");
                 
                 li.innerHTML = `
-                    ${recordHtml}
-                    <p data-i18n="RECORD_REASON_PREFIX" class="text-sm text-gray-500 dark:text-gray-400">系統判斷：${records.reason}</p>
-                `;
+    ${recordHtml}
+    <p class="text-sm text-gray-500 dark:text-gray-400">
+        <span data-i18n="RECORD_REASON_PREFIX">系統判斷：</span>
+        
+        ${records.reason}
+    </p>                `;
                 dailyRecordsList.appendChild(li);
                 renderTranslations(li);
             });
@@ -606,9 +609,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         const coordsEl = document.getElementById('location-coords');
         console.log(mapInstance && !forceReload);
         // 取得載入文字元素
-         if (!mapLoadingText) {
-             mapLoadingText = document.getElementById('map-loading-text');
-         }
+        if (!mapLoadingText) {
+            mapLoadingText = document.getElementById('map-loading-text');
+        }
         // 檢查地圖實例是否已存在
         if (mapInstance) {
             // 如果已經存在，並且沒有被要求強制重新載入，則直接返回
@@ -622,10 +625,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             mapInstance = null;
         }
         
-
+        
         // 顯示載入中的文字
         mapLoadingText.style.display = 'block'; // 或 'block'，根據你的樣式決定
-
+        
         // 建立地圖
         mapInstance = L.map('map-container', {
             center: [25.0330, 121.5654], // 預設中心點為台北市
@@ -638,11 +641,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         }).addTo(mapInstance);
         
         // 讓地圖在完成載入後隱藏載入中的文字
-            mapInstance.whenReady(() => {
-              mapLoadingText.style.display = 'none';
-              // 確保地圖的尺寸正確
-              mapInstance.invalidateSize();
-            });
+        mapInstance.whenReady(() => {
+            mapLoadingText.style.display = 'none';
+            // 確保地圖的尺寸正確
+            mapInstance.invalidateSize();
+        });
         
         // 顯示載入狀態
         //mapContainer.innerHTML = t("MAP_LOADING");
@@ -781,7 +784,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const switchTab = (tabId) => {
         const tabs = ['dashboard-view', 'monthly-view', 'location-view', 'admin-view'];
         const btns = ['tab-dashboard-btn', 'tab-monthly-btn', 'tab-location-btn', 'tab-admin-btn'];
-
+        
         // 1. 移除舊的 active 類別和 CSS 屬性
         tabs.forEach(id => {
             const tabElement = document.getElementById(id);
@@ -795,17 +798,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             btnElement.classList.replace('bg-indigo-600', 'bg-gray-200');
             btnElement.classList.replace('text-white', 'text-gray-600');
         });
-
+        
         // 3. 顯示新頁籤並新增 active 類別
         const newTabElement = document.getElementById(tabId);
         newTabElement.style.display = 'block'; // 顯示內容
         newTabElement.classList.add('active'); // 新增 active 類別
-
+        
         // 4. 設定新頁籤按鈕的選中狀態
         const newBtnElement = document.getElementById(`tab-${tabId.replace('-view', '-btn')}`);
         newBtnElement.classList.replace('bg-gray-200', 'bg-indigo-600');
         newBtnElement.classList.replace('text-gray-600', 'text-white');
-
+        
         // 5. 根據頁籤 ID 執行特定動作
         if (tabId === 'monthly-view') {
             renderCalendar(currentMonthDate);
@@ -818,7 +821,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // 語系初始化
     let currentLang = localStorage.getItem("lang"); // 先從 localStorage 讀取上次的設定
-
+    
     // 如果 localStorage 沒有紀錄，才根據瀏覽器設定判斷
     if (!currentLang) {
         const browserLang = navigator.language || navigator.userLanguage;
@@ -1009,7 +1012,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     tabAdminBtn.addEventListener('click', async () => { // 👈 在這裡加上 async
         // 呼叫 API 檢查 Session 和權限
         const res = await callApifetch("checkSession");
-
+        
         // 檢查回傳的結果和權限
         if (res.ok && res.user && res.user.dept === "管理員") {
             // 如果 Session 有效且是管理員，執行頁籤切換
