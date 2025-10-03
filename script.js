@@ -392,7 +392,7 @@ async function renderDailyRecords(dateKey) {
             dailyRecordsEmpty.style.display = 'none';
             dailyRecords.forEach(records => {
                 const li = document.createElement('li');
-                li.className = 'p-3 bg-gray-50 dark:bg-gray-800 rounded-lg';
+                li.className = 'p-3 bg-gray-50 dark:bg-gray-600 rounded-lg';
                 const recordHtml = records.record.map(r => {
                     // 根據 r.type 的值來選擇正確的翻譯鍵值
                     const typeKey = r.type === '上班' ? 'PUNCH_IN' : 'PUNCH_OUT';

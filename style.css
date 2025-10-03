@@ -183,3 +183,17 @@ html.dark .day-cell:hover {
     transform: translateY(-2px);
     box-shadow: 0 2px 4px -1px rgb(255 255 255 / 0.1), 0 1px 2px -1px rgb(255 255 255 / 0.05);
 }
+/* 確保地圖容器的背景在反轉時不會出現亮色閃爍 */
+#map {
+    background: #1e1e1e; /* 設置一個深色背景 */
+}
+
+/* 當 HTML 處於暗黑模式時，對 Leaflet 的圖層應用濾鏡 */
+html.dark .leaflet-layer,
+html.dark .leaflet-control-zoom-in,
+html.dark .leaflet-control-zoom-out,
+html.dark .leaflet-control-attribution {
+    /* invert(100%)：顏色完全反轉，亮變暗，暗變亮 */
+    /* hue-rotate(180deg)：可選，調整色調，讓藍色街道不至於變成難看的紅色 */
+    filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+}
