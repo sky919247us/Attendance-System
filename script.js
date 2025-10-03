@@ -197,10 +197,10 @@ async function checkAbnormal() {
                 abnormalList.innerHTML = '';
                 res.records.forEach(record => {
                     const li = document.createElement('li');
-                    li.className = 'p-3 bg-gray-50 rounded-lg flex justify-between items-center';
+                    li.className = 'p-3 bg-gray-50 rounded-lg flex justify-between items-center dark:bg-gray-700';
                     li.innerHTML = `
                         <div>
-                            <p class="font-medium text-gray-800">${record.date}</p>
+                            <p class="font-medium text-gray-800 dark:text-white">${record.date}</p>
                             <p class="text-sm text-red-600">${record.reason}</p>
                         </div>
                         <button data-i18n="ADJUST_BUTTON_TEXT" data-date="${record.date}" data-reason="${record.reason}" class="adjust-btn text-sm font-semibold text-indigo-600 hover:text-indigo-800">補打卡</button>
