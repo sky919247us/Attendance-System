@@ -46,6 +46,8 @@ function renderTranslations(container = document) {
     if (container === document) {
         document.title = t("APP_TITLE");
     }
+
+    // 處理靜態內容：[data-i18n]
     const elementsToTranslate = container.querySelectorAll('[data-i18n]');
     elementsToTranslate.forEach(element => {
         const key = element.getAttribute('data-i18n');
@@ -58,6 +60,20 @@ function renderTranslations(container = document) {
             } else {
                 element.textContent = translatedText;
             }
+        }
+    });
+
+    // ✨ 新增邏輯：處理動態內容的翻譯，使用 [data-i18n-key]
+    const dynamicElements = container.querySelectorAll('[data-i18n-key]');
+    dynamicElements.forEach(element => {
+        const key = element.getAttribute('data-i18n-key');
+        if (key) {
+             const translatedText = t(key);
+             
+             // 只有當翻譯結果不是原始鍵值時才進行更新
+             if (translatedText !== key) {
+                 element.textContent = translatedText;
+             }
         }
     });
 }
@@ -201,7 +217,10 @@ async function checkAbnormal() {
                     li.innerHTML = `
                         <div>
                             <p class="font-medium text-gray-800 dark:text-white">${record.date}</p>
-                            <p class="text-sm text-red-600 dark:text-red-400">${t(record.reason)}</p>
+                    <p class="text-sm text-red-600 dark:text-red-400"
+                       data-i18n-dynamic="true"
+                       data-i18n-key="${record.reason}">
+                       </p>
                         </div>
                     <button data-i18n="ADJUST_BUTTON_TEXT" data-date="${record.date}" data-reason="${record.reason}" 
                             class="adjust-btn text-sm font-semibold 

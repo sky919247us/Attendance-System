@@ -73,13 +73,13 @@
                 
                 <div class="flex items-center space-x-3">
                     <img id="profile-img" src="https://placehold.co/40x40/e0e0e0/757575?text=U" alt="頭像" class="w-10 h-10 rounded-full">
-                        <div>
-                            <p id="user-name" class="font-semibold">使用者名稱</p>
-                            <p id="welcome-mes" data-i18n="WELCOME_BACK" class="text-xs text-gray-500">歡迎回來！</p>
-                        </div>
+                    <div>
+                        <p id="user-name" class="font-semibold">使用者名稱</p>
+                        <p id="welcome-mes" data-i18n="WELCOME_BACK" class="text-xs text-gray-500">歡迎回來！</p>
+                    </div>
                 </div>
                 
-                <div class="flex items-center space-x-3">
+                <div class="flex flex-col items-end space-y-2">
                     
                     <select id="language-switcher" class="text-sm font-medium text-gray-600 rounded-md p-1 dark:text-gray-300 dark:bg-gray-700 max-w-xs">
                         <option value="zh-TW">繁體中文</option>
@@ -89,12 +89,14 @@
                         <option value="ja">日本語</option>
                     </select>
                     
-                    <button id="logout-btn" data-i18n="BTN_LOGOUT" class="text-sm font-medium text-gray-600 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400">登出</button>
+                    <div class="flex items-center space-x-3">
+                        <button id="logout-btn" data-i18n="BTN_LOGOUT" class="text-sm font-medium text-gray-600 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400">登出</button>
+                        <button id="theme-toggle"
+                            class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200">
+                            <span id="theme-icon">🌙</span>
+                        </button>
+                    </div>
                     
-                    <button id="theme-toggle"
-                        class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200">
-                        <span id="theme-icon">🌙</span>
-                    </button>
                 </div>
                 
             </header>
