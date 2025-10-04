@@ -135,6 +135,7 @@
     "repair_pending": "待審",
     "no_record": "無紀錄",
     "ERR_BEFORE_MONTH_START": "⚠️ 不能選擇本月以前的時間",
+    "STATUS_PUNCH_NORMAL": "打卡正常", 
     "STATUS_PUNCH_OUT_MISSING": "未打下班卡",
     "STATUS_PUNCH_IN_MISSING": "未打上班卡",
     "STATUS_REPAIR_PENDING": "補卡(審核中)",

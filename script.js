@@ -305,19 +305,19 @@ function renderCalendarWithData(year, month, today, records, calendarGrid, month
         if (todayRecords.length > 0) {
             const reason = todayRecords[0].reason;
             switch (reason) {
-                case "未打上班卡":
+                case "STATUS_PUNCH_IN_MISSING":
                     dateClass = 'abnormal-day';
                     break;
-                case "未打下班卡":
+                case "STATUS_PUNCH_OUT_MISSING":
                     dateClass = 'abnormal-day';
                     break;
-                case "正常":
+                case "STATUS_PUNCH_NORMAL":
                     dateClass = 'day-off';
                     break;
-                case "補卡(審核中)":
+                case "STATUS_REPAIR_PENDING":
                     dateClass = 'pending-virtual';
                     break;
-                case "補卡通過":
+                case "STATUS_REPAIR_APPROVED":
                     dateClass = 'approved-virtual';
                     break;
                 default:
