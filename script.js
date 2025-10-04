@@ -902,6 +902,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     function generalButtonState(button, state, loadingText = '處理中...') {
         if (!button) return;
+        const loadingClasses = 'opacity-50 cursor-not-allowed';
 
         if (state === 'processing') {
             // --- 進入處理中狀態 ---
