@@ -918,7 +918,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             button.textContent = loadingText; // 使用傳入的 loadingText
             
             // 4. 添加視覺反饋 (禁用時的樣式)
-            button.classList.add(button.dataset.loadingClasses);
+            button.classList.add(...loadingClasses.split(' '));
             
             // 可選：移除 hover 效果，防止滑鼠移動時顏色變化
             // 假設您的按鈕有 hover:opacity-100 之類的類別，這裡需要調整
@@ -1033,7 +1033,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // 只有在點擊到按鈕時才繼續執行
         if (button) {
-            const loadingText = t('LOADING') || '處理中...';
+            const  = t('LOADING') || '處理中...';
 
             const datetime = document.getElementById("adjustDateTime").value;
             const type = button.dataset.type; // 應該從找到的 button 元素上讀取 data-type
