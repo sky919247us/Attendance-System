@@ -1033,7 +1033,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // 只有在點擊到按鈕時才繼續執行
         if (button) {
-            const  = t('LOADING') || '處理中...';
+            const  loadingText = t('LOADING') || '處理中...';
 
             const datetime = document.getElementById("adjustDateTime").value;
             const type = button.dataset.type; // 應該從找到的 button 元素上讀取 data-type
