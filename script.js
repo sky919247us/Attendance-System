@@ -506,6 +506,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         listEl.innerHTML = '';
         
         requests.forEach((req, index) => {
+            // ... (省略 li.innerHTML 內容，維持不變) ...
             const li = document.createElement('li');
             li.className = 'p-4 bg-gray-50 rounded-lg shadow-sm flex flex-col space-y-2 dark:bg-gray-700';
             li.innerHTML = `
@@ -522,47 +523,62 @@ document.addEventListener('DOMContentLoaded', async () => {
             renderTranslations(li);
         });
         
-        // 為新建立的按鈕添加事件監聽器
         listEl.querySelectorAll('.approve-btn').forEach(button => {
-            button.addEventListener('click', (e) => handleReviewAction(e.target.dataset.index, 'approve'));
+            button.addEventListener('click', (e) => handleReviewAction(e.currentTarget, e.currentTarget.dataset.index, 'approve'));
         });
         
         listEl.querySelectorAll('.reject-btn').forEach(button => {
-            button.addEventListener('click', (e) => handleReviewAction(e.target.dataset.index, 'reject'));
+            button.addEventListener('click', (e) => handleReviewAction(e.currentTarget, e.currentTarget.dataset.index, 'reject'));
         });
     }
     
     /**
      * 處理審核動作（核准或拒絕）。
+     * @param {HTMLElement} button - 被點擊的按鈕元素。 ✨ 新增此參數
      * @param {number} index - 請求在陣列中的索引。
      * @param {string} action - 'approve' 或 'reject'。
      */
-    async function handleReviewAction(index, action) {
+    async function handleReviewAction(button, index, action) {
         const request = pendingRequests[index];
         if (!request) {
             showNotification("找不到請求資料。", "error");
             return;
         }
-        
-        // 直接使用後端回傳的 ID，不再自己計算
+
         const recordId = request.id;
-        
         const endpoint = action === 'approve' ? 'approveReview' : 'rejectReview';
+        const loadingText = t('LOADING') || '處理中...';
+        
+        // A. 進入處理中狀態
+        generalButtonState(button, 'processing', loadingText);
         
         try {
             const res = await callApifetch(`${endpoint}&id=${recordId}`);
+            
             if (res.ok) {
-                // 使用 t() 函式和動態鍵值
                 const translationKey = action === 'approve' ? 'REQUEST_APPROVED' : 'REQUEST_REJECTED';
                 showNotification(t(translationKey), "success");
-                fetchAndRenderReviewRequests(); // 重新整理列表
+                
+                // 由於成功後列表會被重新整理，這裡可以不立即恢復按鈕狀態
+                // 但是為了保險起見，我們仍然在 finally 中恢復。
+                
+                // 延遲執行，讓按鈕的禁用狀態能被看到
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                // 列表重新整理會渲染新按鈕，覆蓋舊的按鈕
+                fetchAndRenderReviewRequests();
             } else {
-                // 使用 t() 函式並傳入動態參數
                 showNotification(t('REVIEW_FAILED', { msg: res.msg }), "error");
             }
+            
         } catch (err) {
             showNotification(t("REVIEW_NETWORK_ERROR"), "error");
             console.error(err);
+            
+        } finally {
+            // B. 無論成功或失敗，都需要將按鈕恢復到可點擊狀態
+            // 只有在列表沒有被重新整理時，這個恢復才有意義
+            generalButtonState(button, 'idle');
         }
     }
     /**
@@ -943,31 +959,53 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
     async function doPunch(type) {
-        
         const punchButtonId = type === '上班' ? 'punch-in-btn' : 'punch-out-btn';
-        punchButtonState(punchButtonId, 'processing');
+        
+        // ✨ 修正點 1: 獲取按鈕元素
+        const button = document.getElementById(punchButtonId);
+        const loadingText = t('LOADING') || '處理中...';
+
+        // 檢查按鈕是否存在，若不存在則直接返回
+        if (!button) return;
+
+        // A. 進入處理中狀態
+        generalButtonState(button, 'processing', loadingText);
         
         if (!navigator.geolocation) {
             showNotification(t("ERROR_GEOLOCATION", { msg: "您的瀏覽器不支援地理位置功能。" }), "error");
-            punchButtonState(punchButtonId, 'complete');
+            
+            // B. 退出點 1: 不支援定位，恢復按鈕狀態
+            generalButtonState(button, 'idle');
             return;
         }
         
+        // C. 處理地理位置的異步回呼
         navigator.geolocation.getCurrentPosition(async (pos) => {
+            // --- 定位成功：執行 API 請求 ---
             const lat = pos.coords.latitude;
             const lng = pos.coords.longitude;
             const action = `punch&type=${encodeURIComponent(type)}&lat=${lat}&lng=${lng}&note=${encodeURIComponent(navigator.userAgent)}`;
+            
             try {
                 const res = await callApifetch(action);
                 const msg = t(res.code || "UNKNOWN_ERROR", res.params || {});
                 showNotification(msg, res.ok ? "success" : "error");
-                punchButtonState(punchButtonId, 'complete');
+                
+                // D. 退出點 2: API 成功，恢復按鈕狀態
+                generalButtonState(button, 'idle');
             } catch (err) {
                 console.error(err);
-                punchButtonState(punchButtonId, 'complete');
+                
+                // E. 退出點 3: API 失敗，恢復按鈕狀態
+                generalButtonState(button, 'idle');
             }
+            
         }, (err) => {
+            // --- 定位失敗：處理權限錯誤等 ---
             showNotification(t("ERROR_GEOLOCATION", { msg: err.message }), "error");
+            
+            // F. 退出點 4: 定位回呼失敗，恢復按鈕狀態
+            generalButtonState(button, 'idle');
         });
     }
     
@@ -1087,18 +1125,36 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     tabLocationBtn.addEventListener('click', () => switchTab('location-view'));
     tabMonthlyBtn.addEventListener('click', () => switchTab('monthly-view'));
-    tabAdminBtn.addEventListener('click', async () => { // 👈 在這裡加上 async
-        // 呼叫 API 檢查 Session 和權限
-        const res = await callApifetch("checkSession");
+    tabAdminBtn.addEventListener('click', async () => {
         
-        // 檢查回傳的結果和權限
-        if (res.ok && res.user && res.user.dept === "管理員") {
-            // 如果 Session 有效且是管理員，執行頁籤切換
-            switchTab('admin-view');
-        } else {
-            // 如果權限不足或 Session 無效，給予錯誤提示
-            // 這裡使用 res.msg 或 t("ERR_NO_PERMISSION") 取決於你的 showNotification 設計
-            showNotification(t("ERR_NO_PERMISSION"), "error");
+        // 獲取按鈕元素和處理中文字
+        const button = tabAdminBtn; // tabAdminBtn 變數本身就是按鈕元素
+        const loadingText = t('CHECKING') || '檢查中...'; // 可以使用更貼切的翻譯
+
+        // A. 進入處理中狀態
+        generalButtonState(button, 'processing', loadingText);
+        
+        try {
+            // 呼叫 API 檢查 Session 和權限
+            const res = await callApifetch("checkSession");
+            
+            // 檢查回傳的結果和權限
+            if (res.ok && res.user && res.user.dept === "管理員") {
+                // 如果 Session 有效且是管理員，執行頁籤切換
+                switchTab('admin-view');
+            } else {
+                // 如果權限不足或 Session 無效，給予錯誤提示
+                showNotification(t("ERR_NO_PERMISSION"), "error");
+            }
+            
+        } catch (err) {
+            // 處理網路錯誤或 API 呼叫失敗
+            console.error(err);
+            showNotification(t("NETWORK_ERROR") || '網絡錯誤', "error");
+            
+        } finally {
+            // B. 無論 API 成功、失敗或網路錯誤，都要恢復按鈕狀態
+            generalButtonState(button, 'idle');
         }
     });
     // 月曆按鈕事件
