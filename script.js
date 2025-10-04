@@ -201,7 +201,7 @@ async function checkAbnormal() {
                     li.innerHTML = `
                         <div>
                             <p class="font-medium text-gray-800 dark:text-white">${record.date}</p>
-                            <p class="text-sm text-red-600 dark:text-red-400">${record.reason}</p>
+                            <p class="text-sm text-red-600 dark:text-red-400">${t(record.reason)}</p>
                         </div>
                     <button data-i18n="ADJUST_BUTTON_TEXT" data-date="${record.date}" data-reason="${record.reason}" 
                             class="adjust-btn text-sm font-semibold 
@@ -414,7 +414,7 @@ async function renderDailyRecords(dateKey) {
     <p class="text-sm text-gray-500 dark:text-gray-400">
         <span data-i18n="RECORD_REASON_PREFIX">系統判斷：</span>
         
-        ${records.reason}
+        ${t(records.reason)}
     </p>                `;
                 dailyRecordsList.appendChild(li);
                 renderTranslations(li);
