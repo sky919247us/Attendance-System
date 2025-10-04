@@ -900,7 +900,47 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
     }
-    
+    function generalButtonState(button, state, loadingText = '處理中...') {
+        if (!button) return;
+
+        if (state === 'processing') {
+            // --- 進入處理中狀態 ---
+            
+            // 1. 儲存原始文本 (用於恢復)
+            button.dataset.originalText = button.textContent;
+            
+            // 2. 儲存原始類別 (用於恢復樣式)
+            // 這是為了在恢復時移除我們為了禁用而添加的類別
+            button.dataset.loadingClasses = 'opacity-50 cursor-not-allowed';
+
+            // 3. 禁用並設置處理中文字
+            button.disabled = true;
+            button.textContent = loadingText; // 使用傳入的 loadingText
+            
+            // 4. 添加視覺反饋 (禁用時的樣式)
+            button.classList.add(button.dataset.loadingClasses);
+            
+            // 可選：移除 hover 效果，防止滑鼠移動時顏色變化
+            // 假設您的按鈕有 hover:opacity-100 之類的類別，這裡需要調整
+            
+        } else {
+            // --- 恢復到原始狀態 ---
+            
+            // 1. 移除視覺反饋
+            if (button.dataset.loadingClasses) {
+                button.classList.remove(...button.dataset.loadingClasses.split(' '));
+            }
+
+            // 2. 恢復禁用狀態
+            button.disabled = false;
+            
+            // 3. 恢復原始文本
+            if (button.dataset.originalText) {
+                button.textContent = button.dataset.originalText;
+                delete button.dataset.originalText; // 清除儲存，讓它在下一次點擊時再次儲存
+            }
+        }
+    }
     async function doPunch(type) {
         
         const punchButtonId = type === '上班' ? 'punch-in-btn' : 'punch-out-btn';
@@ -987,15 +1027,27 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     
     adjustmentFormContainer.addEventListener('click', async (e) => {
-        if (e.target.classList.contains('submit-adjust-btn')) {
+        
+        // 修正 1：在這裡使用 e.target.closest() 來尋找按鈕
+        const button = e.target.closest('.submit-adjust-btn'); // 確保 selector 前面有 '.'
+
+        // 只有在點擊到按鈕時才繼續執行
+        if (button) {
+            const loadingText = t('LOADING') || '處理中...';
+
             const datetime = document.getElementById("adjustDateTime").value;
-            const type = e.target.dataset.type;
+            const type = button.dataset.type; // 應該從找到的 button 元素上讀取 data-type
+
             if (!datetime) {
                 showNotification("請選擇補打卡日期時間", "error");
                 return;
             }
             if (!validateAdjustTime(datetime)) return;
+
+            // 步驟 A: 進入處理中狀態
+            generalButtonState(button, 'processing', loadingText);
             
+            // ------------------ API 邏輯 ------------------
             const dateObj = new Date(datetime);
             const lat = 0;
             const lng = 0;
@@ -1005,12 +1057,26 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const res = await callApifetch(action, "loadingMsg");
                 const msg = t(res.code || "UNKNOWN_ERROR", res.params || {});
                 showNotification(msg, res.ok ? "success" : "error");
+
                 if (res.ok) {
                     adjustmentFormContainer.innerHTML = '';
                     checkAbnormal(); // 補打卡成功後，重新檢查異常紀錄
                 }
+
             } catch (err) {
                 console.error(err);
+                showNotification(t('NETWORK_ERROR') || '網絡錯誤', 'error');
+                
+            } finally {
+                // 修正 3：操作完成後，必須在 finally 區塊恢復按鈕狀態
+                // **只有在沒有成功清空表單時才恢復按鈕**
+                // 因為成功時您已經清空了 adjustmentFormContainer.innerHTML = '';
+                // 如果成功時，按鈕已經消失，則不需要復原。
+                
+                // 判斷：如果容器沒有清空 (即請求失敗或有錯誤)，則恢復按鈕。
+                if (adjustmentFormContainer.innerHTML !== '') {
+                    generalButtonState(button, 'idle');
+                }
             }
         }
     });
