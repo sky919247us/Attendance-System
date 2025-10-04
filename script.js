@@ -422,7 +422,7 @@ async function renderDailyRecords(dateKey) {
                     const typeKey = r.type === '上班' ? 'PUNCH_IN' : 'PUNCH_OUT';
                     
                     return `
-                        <p class="font-medium text-gray-800 dark:text-white" data-i18n-dynamic="true" data-i18n-key="${record.reason}">${r.time} - ${typeKey}</p>
+                        <p class="font-medium text-gray-800 dark:text-white">${r.time} - ${t(typeKey)}</p>
                         <p class="text-sm text-gray-500 dark:text-gray-400">${r.location}</p>
                         <p data-i18n="RECORD_NOTE_PREFIX" class="text-sm text-gray-500 dark:text-gray-400">備註：${r.note}</p>
                     `;
@@ -430,10 +430,10 @@ async function renderDailyRecords(dateKey) {
                 
                 li.innerHTML = `
     ${recordHtml}
-    <p class="text-sm text-gray-500 dark:text-gray-400" data-i18n-dynamic="true" data-i18n-key="${record.reason}>
+    <p class="text-sm text-gray-500 dark:text-gray-400">
         <span data-i18n="RECORD_REASON_PREFIX">系統判斷：</span>
         
-        ${records.reason}
+        ${t(records.reason)}
     </p>                `;
                 dailyRecordsList.appendChild(li);
                 renderTranslations(li);
