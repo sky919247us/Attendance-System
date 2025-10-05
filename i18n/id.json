@@ -113,7 +113,7 @@
   "BTN_VIEW_ABNORMAL": "⚠️ Lihat Catatan Abnormal 👀",
   "INVALID_ADJUST_TIME": "⚠️ Waktu yang dipilih tidak valid.",
   "SELECT_ADJUST_DATETIME": "Silakan pilih tanggal dan waktu absen susulan.",
-  "LOGIN_SUCCESS": "✅ Berhasil masuk, Token tersimpan!",
+  "LOGIN_SUCCESS": "✅ Berhasil masuk!",
   "ERROR_GEOLOCATION": "⚠️ Gagal mendapatkan lokasi: {msg}",
   "ERROR_LOGIN_FAILED": "❌ Gagal masuk: {msg}",
   "calendar_title": "Kalender Absensi Saya",

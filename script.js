@@ -529,13 +529,24 @@ document.addEventListener('DOMContentLoaded', async () => {
             const li = document.createElement('li');
             li.className = 'p-4 bg-gray-50 rounded-lg shadow-sm flex flex-col space-y-2 dark:bg-gray-700';
             li.innerHTML = `
-                <div class="flex items-center justify-between">
-                    <p class="text-sm font-semibold text-gray-800 dark:text-white">${req.name} - ${req.remark}</p>
-                    <span class="text-xs text-gray-500 ">${req.applicationPeriod}</span>
-                </div>
-                <div class="flex justify-end space-x-2">
-                    <button data-i18n="ADMIN_APPROVE_BUTTON" data-index="${index}" class="approve-btn px-3 py-1 rounded-md text-sm font-bold btn-primary">核准</button>
-                    <button data-i18n="ADMIN_REJECT_BUTTON" data-index="${index}" class="reject-btn px-3 py-1 rounded-md text-sm font-bold btn-warning">拒絕</button>
+             <div class="flex flex-col space-y-1">
+
+                        <div class="flex items-center justify-between w-full">
+                            <p class="text-sm font-semibold text-gray-800 dark:text-white">${req.name} - ${req.remark}</p>
+                            <span class="text-xs text-gray-500">${req.applicationPeriod}</span>
+                        </div>
+                    </div>
+                    
+                <div class="flex items-center justify-between w-full mt-2">
+                    <p 
+                        data-i18n-key="${req.type}" 
+                        class="text-sm text-indigo-600 dark:text-indigo-400 font-medium">
+                    </p> 
+                    
+                    <div class="flex space-x-2"> 
+                        <button data-i18n="ADMIN_APPROVE_BUTTON" data-index="${index}" class="approve-btn px-3 py-1 rounded-md text-sm font-bold btn-primary">核准</button>
+                        <button data-i18n="ADMIN_REJECT_BUTTON" data-index="${index}" class="reject-btn px-3 py-1 rounded-md text-sm font-bold btn-warning">拒絕</button>
+                    </div>
                 </div>
             `;
             listEl.appendChild(li);

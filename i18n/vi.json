@@ -113,7 +113,7 @@
   "BTN_VIEW_ABNORMAL": "⚠️ Xem các bản ghi bất thường 👀",
   "INVALID_ADJUST_TIME": "⚠️ Thời gian đã chọn không hợp lệ.",
   "SELECT_ADJUST_DATETIME": "Vui lòng chọn ngày và giờ chấm công bổ sung.",
-  "LOGIN_SUCCESS": "✅ Đăng nhập thành công, token đã được lưu!",
+  "LOGIN_SUCCESS": "✅ Đăng nhập thành công!",
   "ERROR_GEOLOCATION": "⚠️ Không thể lấy vị trí: {msg}",
   "ERROR_LOGIN_FAILED": "❌ Đăng nhập thất bại: {msg}",
   "calendar_title": "Lịch chấm công của tôi",

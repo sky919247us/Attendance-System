@@ -113,7 +113,7 @@
   "BTN_VIEW_ABNORMAL": "⚠️ View Abnormal Records 👀",
   "INVALID_ADJUST_TIME": "⚠️ Selected time is invalid.",
   "SELECT_ADJUST_DATETIME": "Please select a date and time.",
-  "LOGIN_SUCCESS": "✅ Login successful, token saved!",
+  "LOGIN_SUCCESS": "✅ Login successful!",
   "ERROR_GEOLOCATION": "⚠️ Unable to get location: {msg}",
   "ERROR_LOGIN_FAILED": "❌ Login failed: {msg}",
   "calendar_title": "My Punch Calendar",
