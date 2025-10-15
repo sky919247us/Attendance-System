@@ -194,35 +194,48 @@ async function ensureLogin() {
  * 檢查 URL 參數，若有 ?action=punch 則自動觸發打卡。
  * 必須在確認用戶已登入後才呼叫。
  */
+f// 前端 JavaScript 程式碼： checkAutoPunch 函式
+
 function checkAutoPunch() {
     const urlParams = new URLSearchParams(window.location.search);
-    const action = urlParams.get('action');
+    // ✨ action 現在會是 'in' 或 'out'
+    const action = urlParams.get('action'); 
+    
+    // 獲取按鈕元素
     const punchInBtn = document.getElementById('punch-in-btn');
+    // ✨ 新增獲取下班按鈕
+    const punchOutBtn = document.getElementById('punch-out-btn'); 
 
-    // 只有在 URL 包含 action=punch 且打卡按鈕存在時才執行
-    if (action === 'punch' && punchInBtn) {
+    let targetButton = null;
+
+    if (action === 'in' && punchInBtn) {
+        targetButton = punchInBtn;
+    } else if (action === 'out' && punchOutBtn) {
+        targetButton = punchOutBtn;
+    }
+
+    // 只有在 URL 包含 action=in/out 且目標打卡按鈕存在時才執行
+    if (targetButton) {
         
-        // 額外檢查：雖然主流程已經檢查過登入，這裡還是做一層保險
         if (localStorage.getItem("sessionToken")) { 
             
             showNotification(t("PUNCH_AUTO_TRIGGERED") || '正在自動打卡...', "info");
             
-            // 延遲執行，讓 UI 有時間渲染並讓用戶看到通知
             setTimeout(() => {
                 
-                // 觸發打卡動作，它會執行 punchInBtn 的 click 監聽器，即 doPunch("上班")
-                punchInBtn.click(); 
+                // ✨ 觸發目標打卡按鈕的點擊事件
+                targetButton.click(); 
                 
-                // 清除 URL 參數，避免用戶重新整理時再次打卡
+                // 清除 URL 參數
                 history.replaceState(null, '', window.location.pathname);
                 
             }, 500);
             
         } else {
-            // 如果主流程判斷為登入失敗，這裡顯示錯誤
             showNotification(t("PUNCH_REQUIRE_LOGIN") || '請先登入才能自動打卡！', "warning");
         }
     }
+    // 注意：如果是舊的 action=punch，這裡將不再處理。
 }
 
 //檢查本月打卡異常
