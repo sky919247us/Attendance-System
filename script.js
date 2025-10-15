@@ -194,7 +194,7 @@ async function ensureLogin() {
  * 檢查 URL 參數，若有 ?action=punch 則自動觸發打卡。
  * 必須在確認用戶已登入後才呼叫。
  */
-f// 前端 JavaScript 程式碼： checkAutoPunch 函式
+// 前端 JavaScript 程式碼： checkAutoPunch 函式
 
 function checkAutoPunch() {
     const urlParams = new URLSearchParams(window.location.search);
