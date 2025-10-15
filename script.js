@@ -190,6 +190,41 @@ async function ensureLogin() {
     });
 }
 
+/**
+ * 檢查 URL 參數，若有 ?action=punch 則自動觸發打卡。
+ * 必須在確認用戶已登入後才呼叫。
+ */
+function checkAutoPunch() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const action = urlParams.get('action');
+    const punchInBtn = document.getElementById('punch-in-btn');
+
+    // 只有在 URL 包含 action=punch 且打卡按鈕存在時才執行
+    if (action === 'punch' && punchInBtn) {
+        
+        // 額外檢查：雖然主流程已經檢查過登入，這裡還是做一層保險
+        if (localStorage.getItem("sessionToken")) { 
+            
+            showNotification(t("PUNCH_AUTO_TRIGGERED") || '正在自動打卡...', "info");
+            
+            // 延遲執行，讓 UI 有時間渲染並讓用戶看到通知
+            setTimeout(() => {
+                
+                // 觸發打卡動作，它會執行 punchInBtn 的 click 監聽器，即 doPunch("上班")
+                punchInBtn.click(); 
+                
+                // 清除 URL 參數，避免用戶重新整理時再次打卡
+                history.replaceState(null, '', window.location.pathname);
+                
+            }, 500);
+            
+        } else {
+            // 如果主流程判斷為登入失敗，這裡顯示錯誤
+            showNotification(t("PUNCH_REQUIRE_LOGIN") || '請先登入才能自動打卡！', "warning");
+        }
+    }
+}
+
 //檢查本月打卡異常
 async function checkAbnormal() {
     const now = new Date();
@@ -895,7 +930,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadTranslations(currentLang);
     
     
-    
+    let isLoggedIn = false; // 新增一個變數來追蹤登入狀態
     const params = new URLSearchParams(window.location.search);
     const otoken = params.get('code');
     
@@ -905,7 +940,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (res.ok && res.sToken) {
                 localStorage.setItem("sessionToken", res.sToken);
                 history.replaceState({}, '', window.location.pathname);
-                ensureLogin();
+                isLoggedIn = await ensureLogin(); // 等待 ensureLogin 完成並更新狀態
             } else {
                 showNotification(t("ERROR_LOGIN_FAILED", { msg: res.msg || t("UNKNOWN_ERROR") }), "error");
                 loginBtn.style.display = 'block';
@@ -915,7 +950,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             loginBtn.style.display = 'block';
         }
     } else {
-        ensureLogin();
+        isLoggedIn = await ensureLogin(); // 等待 ensureLogin 完成並更新狀態
+    }
+    
+    // ✨ 核心修正點：只有在登入成功後，才檢查 URL 參數是否需要自動打卡
+    if (isLoggedIn) {
+        checkAutoPunch();
+        
+        // 由於您在 ensureLogin 中已經呼叫了 checkAbnormal，
+        // 這裡可以繼續您的其他初始化邏輯，例如渲染日曆：
+        // renderCalendar(currentMonthDate);
     }
     
     // 綁定按鈕事件
